@@ -1,4 +1,4 @@
-# Documentation
+# :blue_book: Documentation
 
 This folder contain all the documentation for the project. It includes comprehensive information and 
 resources needed to understand, develop, and maintain the project effectively. By organizing all 
