@@ -5,7 +5,7 @@ resources needed to understand, develop, and maintain the project effectively. B
 documentation in one place, we ensure easy access and management, facilitating collaboration among team 
 members and providing clear guidance throughout the project's lifecycle.
 
----
+--
 
 ### Commit Messages
 
