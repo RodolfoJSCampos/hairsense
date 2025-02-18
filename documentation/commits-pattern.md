@@ -1,6 +1,6 @@
 ### Commit Messages
 
-The commits in this repository follow a pattern inspired by the Google standard. Google uses a semantic commit message convention that includes specific types of commits, such as:
+The commits in this repository follow a pattern inspired by the Google patterns. Google uses a semantic commit message convention that includes specific types of commits, such as:
 
 - **feat**: Addition of a new feature.
 - **fix**: Bug fix.
