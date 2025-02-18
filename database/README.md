@@ -1,4 +1,4 @@
-#Database
+# Database
 
 This folder will exclusively contain all files related to the database building, 
 such as schema definitions, migration scripts, and seed data. By segregating these components, it becomes easier to manage 
