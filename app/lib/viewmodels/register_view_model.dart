@@ -4,6 +4,7 @@ import '../services/auth_service.dart';
 class RegisterViewModel extends ChangeNotifier {
   final emailController = TextEditingController();
   final senhaController = TextEditingController();
+  final confirmarSenhaController = TextEditingController();
 
   bool isLoading = false;
   bool senhaOculta = true;
@@ -21,6 +22,9 @@ class RegisterViewModel extends ChangeNotifier {
         senhaController.text.isEmpty) {
       return 'Preencha todos os campos.';
     }
+    if (senhaController.text != confirmarSenhaController.text) {
+  return 'As senhas não coincidem.';
+}
 
     try {
       isLoading = true;
@@ -43,5 +47,6 @@ class RegisterViewModel extends ChangeNotifier {
   void disposeControllers() {
     emailController.dispose();
     senhaController.dispose();
+    confirmarSenhaController.dispose();
   }
 }

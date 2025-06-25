@@ -24,68 +24,102 @@ class RegisterView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cadastroVM = Provider.of<RegisterViewModel>(context);
-    final tamanho = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cadastro'),
-        backgroundColor: Colors.blue[900],
-      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: tamanho.height - 100),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextField(
-                  controller: cadastroVM.emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: _inputDeco('E-mail'),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 36.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 24),
+              Center(
+                child: Image.asset(
+                  'assets/LogoMain.png',
+                  height: 140,
                 ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: cadastroVM.senhaController,
-                  obscureText: cadastroVM.senhaOculta,
-                  decoration: _inputDeco('Senha').copyWith(
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        cadastroVM.senhaOculta
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        color: Colors.grey[700],
+              ),
+              const SizedBox(height: 40),
+
+              TextField(
+                controller: cadastroVM.emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: _inputDeco('E-mail'),
+              ),
+              const SizedBox(height: 16),
+
+              TextField(
+                controller: cadastroVM.senhaController,
+                obscureText: cadastroVM.senhaOculta,
+                decoration: _inputDeco('Senha').copyWith(
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      cadastroVM.senhaOculta
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                      color: Colors.grey[700],
+                    ),
+                    onPressed: cadastroVM.toggleSenhaVisibilidade,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              TextField(
+                controller: cadastroVM.confirmarSenhaController,
+                obscureText: true,
+                decoration: _inputDeco('Repita a senha'),
+              ),
+              const SizedBox(height: 24),
+
+              cadastroVM.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ElevatedButton(
+                      onPressed: () async {
+                        final erro = await cadastroVM.registrarUsuario();
+                        if (erro != null) {
+                          _mostrarAlerta(context, 'Erro', erro);
+                        } else {
+                          _mostrarAlerta(context, 'Sucesso', 'Usuário cadastrado com sucesso!');
+                          Navigator.pop(context);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(50),
+                        backgroundColor: Colors.blue[900],
                       ),
-                      onPressed: cadastroVM.toggleSenhaVisibilidade,
+                      child: const Text('Criar Conta'),
+                    ),
+              const SizedBox(height: 16),
+
+              OutlinedButton.icon(
+                onPressed: () {
+                  // ainda não conectado: cadastrar com Google
+                },
+                icon: Image.asset('assets/google logo.png', height: 20, width: 20),
+                label: const Text('Sign up with Google'),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(50),
+                  foregroundColor: Colors.black87,
+                  backgroundColor: Colors.white,
+                  side: const BorderSide(color: Colors.grey),
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              Center(
+                child: TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    '< Voltar',
+                    style: TextStyle(
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
-                cadastroVM.isLoading
-                    ? const CircularProgressIndicator()
-                    : ElevatedButton(
-                        onPressed: () async {
-                          final erro = await cadastroVM.registrarUsuario();
-                          if (erro != null) {
-                            _mostrarAlerta(context, 'Erro', erro);
-                          } else {
-                            _mostrarAlerta(
-                              context,
-                              'Sucesso',
-                              'Usuário cadastrado com sucesso!',
-                            );
-                            // Voltar para tela de login após cadastro (opcional):
-                            // Navigator.pop(context);
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue[900],
-                          minimumSize: const Size(double.infinity, 48),
-                        ),
-                        child: const Text('Cadastrar'),
-                      ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -95,13 +129,13 @@ class RegisterView extends StatelessWidget {
   InputDecoration _inputDeco(String label) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Colors.black87),
       filled: true,
       fillColor: Colors.white,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       enabledBorder: const OutlineInputBorder(
         borderSide: BorderSide(color: Colors.white),
       ),
-      focusedBorder: OutlineInputBorder(
+      focusedBorder: const OutlineInputBorder(
         borderSide: BorderSide(color: Colors.blueAccent),
       ),
     );

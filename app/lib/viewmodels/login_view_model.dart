@@ -54,6 +54,29 @@ class LoginViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+  Future<String?> recuperarSenha() async {
+  final email = emailController.text.trim();
+
+  if (email.isEmpty) {
+    return 'Informe um e-mail para recuperação.';
+  }
+
+  try {
+    await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+    return null;
+  } on FirebaseAuthException catch (e) {
+    switch (e.code) {
+      case 'invalid-email':
+        return 'E-mail inválido.';
+      case 'user-not-found':
+        return 'E-mail não está cadastrado.';
+      default:
+        return 'Erro ao enviar e-mail de recuperação.';
+    }
+  } catch (e) {
+    return 'Erro inesperado: ${e.toString()}';
+  }
+}
 
   String _traduzErroFirebase(String code) {
     switch (code) {
