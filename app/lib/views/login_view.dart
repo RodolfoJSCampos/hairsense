@@ -111,7 +111,7 @@ class LoginView extends StatelessWidget {
                   }
                 },
                 icon: Image.asset(
-                  'assets/google logo.png',
+                  'assets/google_logo.png',
                   height: 20,
                   width: 20,
                 ),

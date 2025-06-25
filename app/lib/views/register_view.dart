@@ -96,7 +96,7 @@ class RegisterView extends StatelessWidget {
                 onPressed: () {
                   // ainda não conectado: cadastrar com Google
                 },
-                icon: Image.asset('assets/google logo.png', height: 20, width: 20),
+                icon: Image.asset('assets/google_logo.png', height: 20, width: 20),
                 label: const Text('Sign up with Google'),
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size.fromHeight(50),
