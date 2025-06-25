@@ -7,46 +7,57 @@ build/
 .flutter-plugins-dependencies
 .melos_tool/
 
-# IntelliJ
-.idea/
-*.iml
-
 # VS Code
 .vscode/
 
+# IntelliJ/Android Studio
+.idea/
+*.iml
+
 # Android
 android/.gradle/
-android/captures/
 android/app/build/
 *.keystore
 
 # iOS/macOS
-ios/Flutter/App.framework
-ios/Flutter/Flutter.framework
-ios/.generated
 ios/Pods/
+ios/.generated/
+ios/Flutter/
 ios/Runner.xcworkspace/
-macos/Flutter/ephemeral/
 macos/Pods/
+macos/.generated/
+macos/Flutter/
 
-# Web
+# Web/Desktop
 web/.dart_tool/
-
-# Linux
 linux/flutter/ephemeral/
 linux/flutter/generated_plugin_registrant.*
-
-# Windows
 windows/flutter/ephemeral/
 windows/flutter/generated_plugin_registrant.*
 
-# Xcode
-*.xcworkspace
-DerivedData/
-*.xcuserstate
-
-# Others
-*.log
-*.lock
+# Firebase
+.firebase/
+.firebase-debug.log
+*.firebase*
+*service-account*.json
+*.secret.*
 .env
-firebase-debug.log
+.env.*
+
+# Outros
+*.lock
+*.log
+*.DS_Store
+*.apk
+*.ipa
+*.orig
+*.tmp
+
+# Arquivos temporários de merge
+*.rej
+*.swp
+*.swo
+*.swn
+
+# Arquivos de pacotes específicos
+coverage/
