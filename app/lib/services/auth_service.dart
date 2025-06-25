@@ -9,7 +9,7 @@ class AuthService {
       email: email.trim(),
       password: senha,
     );
-  }
+  } //login com email
 
   Future<UserCredential> loginWithGoogle() async {
     final googleUser = await GoogleSignIn().signIn();
@@ -22,13 +22,13 @@ class AuthService {
     );
 
     return _firebaseAuth.signInWithCredential(credential);
-  }
+  } //login com google
 
   Future<UserCredential> cadastrarComEmail(String email, String senha) async {
     return _firebaseAuth.createUserWithEmailAndPassword(
       email: email.trim(),
       password: senha,
     );
-  }
+  } // cadastro com email 
 }
 
