@@ -53,7 +53,7 @@ class LoginView extends StatelessWidget {
                       loginVM.senhaOculta
                           ? Icons.visibility_off
                           : Icons.visibility,
-                      color: Colors.grey[700],
+                      color: const Color.fromARGB(255, 255, 255, 255),
                     ),
                     onPressed: loginVM.toggleSenhaVisibilidade,
                   ),
@@ -92,7 +92,9 @@ class LoginView extends StatelessWidget {
                     },
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size.fromHeight(50),
-                      backgroundColor: Colors.blue[900],
+                      foregroundColor: Colors.black87,
+                      backgroundColor: Colors.white,
+                      side: const BorderSide(color: Colors.grey),
                     ),
                     child: const Text('Entrar'),
                   ),

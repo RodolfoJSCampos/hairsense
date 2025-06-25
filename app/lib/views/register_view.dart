@@ -86,7 +86,9 @@ class RegisterView extends StatelessWidget {
                       },
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size.fromHeight(50),
-                        backgroundColor: Colors.blue[900],
+                        foregroundColor: Colors.black87,
+                        backgroundColor: Colors.white,
+                        side: const BorderSide(color: Colors.grey),
                       ),
                       child: const Text('Criar Conta'),
                     ),
