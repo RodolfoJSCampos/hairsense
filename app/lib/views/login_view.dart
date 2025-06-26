@@ -7,26 +7,26 @@ import 'register_view.dart';
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
 
+  // Exibe um alerta genérico com título e mensagem (usado para feedback ao usuário)
   void _mostrarAlerta(BuildContext context, String titulo, String mensagem) {
     showDialog(
       context: context,
-      builder:
-          (_) => AlertDialog(
-            title: Text(titulo),
-            content: Text(mensagem),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
-              ),
-            ],
+      builder: (_) => AlertDialog(
+        title: Text(titulo),
+        content: Text(mensagem),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
           ),
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final loginVM = Provider.of<LoginViewModel>(context);
+    final loginVM = Provider.of<LoginViewModel>(context); // Acesso ao ViewModel de login
 
     return Scaffold(
       body: SafeArea(
@@ -36,14 +36,22 @@ class LoginView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 24),
+              
+              // Logotipo centralizado
               Center(child: Image.asset('assets/LogoMain.png', height: 140)),
+              
               const SizedBox(height: 40),
+              
+              // Campo de e-mail com validação
               TextField(
                 controller: loginVM.emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: _inputDeco('E-mail'),
               ),
+
               const SizedBox(height: 20),
+              
+              // Campo de senha com ícone para alternar visibilidade
               TextField(
                 controller: loginVM.senhaController,
                 obscureText: loginVM.senhaOculta,
@@ -59,7 +67,10 @@ class LoginView extends StatelessWidget {
                   ),
                 ),
               ),
+
               const SizedBox(height: 10),
+              
+              // Botão "Esqueci minha senha" com feedback via alerta
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
@@ -78,27 +89,33 @@ class LoginView extends StatelessWidget {
                   child: const Text('Esqueci minha senha...'),
                 ),
               ),
+
               const SizedBox(height: 20),
+
+              // Botão "Entrar" com loading durante autenticação
               loginVM.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : ElevatedButton(
-                    onPressed: () async {
-                      final erro = await loginVM.loginComEmail();
-                      if (erro != null) {
-                        _mostrarAlerta(context, 'Erro', erro);
-                      } else {
-                        _mostrarAlerta(context, 'Sucesso', 'Login realizado!');
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size.fromHeight(50),
-                      foregroundColor: Colors.black87,
-                      backgroundColor: Colors.white,
-                      side: const BorderSide(color: Colors.grey),
+                      onPressed: () async {
+                        final erro = await loginVM.loginComEmail();
+                        if (erro != null) {
+                          _mostrarAlerta(context, 'Erro', erro);
+                        } else {
+                          _mostrarAlerta(context, 'Sucesso', 'Login realizado!');
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(50),
+                        foregroundColor: Colors.black87,
+                        backgroundColor: Colors.white,
+                        side: const BorderSide(color: Colors.grey),
+                      ),
+                      child: const Text('Entrar'),
                     ),
-                    child: const Text('Entrar'),
-                  ),
+
               const SizedBox(height: 16),
+
+              // Botão de login com conta Google
               OutlinedButton.icon(
                 onPressed: () async {
                   final erro = await loginVM.loginComGoogle();
@@ -125,18 +142,20 @@ class LoginView extends StatelessWidget {
                   side: const BorderSide(color: Colors.grey),
                 ),
               ),
+
               const SizedBox(height: 30),
+
+              // Link para ir para a tela de cadastro
               Center(
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder:
-                            (_) => ChangeNotifierProvider(
-                              create: (_) => RegisterViewModel(),
-                              child: const RegisterView(),
-                            ),
+                        builder: (_) => ChangeNotifierProvider(
+                          create: (_) => RegisterViewModel(),
+                          child: const RegisterView(),
+                        ),
                       ),
                     );
                   },
@@ -156,6 +175,7 @@ class LoginView extends StatelessWidget {
     );
   }
 
+  // Método utilitário para estilizar campos de texto
   InputDecoration _inputDeco(String label) {
     return InputDecoration(
       labelText: label,

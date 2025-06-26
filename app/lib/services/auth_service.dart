@@ -4,13 +4,15 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
+  // Realiza o login do usuário utilizando e-mail e senha cadastrados
   Future<UserCredential> loginWithEmail(String email, String senha) async {
     return _firebaseAuth.signInWithEmailAndPassword(
       email: email.trim(),
       password: senha,
     );
-  } //login com email
+  }
 
+  // Permite autenticação via conta do Google integrada ao Firebase
   Future<UserCredential> loginWithGoogle() async {
     final googleUser = await GoogleSignIn().signIn();
     if (googleUser == null) throw FirebaseAuthException(code: 'cancelled');
@@ -22,13 +24,14 @@ class AuthService {
     );
 
     return _firebaseAuth.signInWithCredential(credential);
-  } //login com google
+  }
 
+  // Cadastra um novo usuário no Firebase utilizando e-mail e senha
   Future<UserCredential> cadastrarComEmail(String email, String senha) async {
     return _firebaseAuth.createUserWithEmailAndPassword(
       email: email.trim(),
       password: senha,
     );
-  } // cadastro com email 
+  }
 }
 
