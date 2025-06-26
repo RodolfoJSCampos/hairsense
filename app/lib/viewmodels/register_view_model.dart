@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../services/firestore_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterViewModel extends ChangeNotifier {
   final emailController = TextEditingController();
   final senhaController = TextEditingController();
   final confirmarSenhaController = TextEditingController();
+  final FirestoreService _firestoreService = FirestoreService();
 
   bool isLoading = false;
   bool senhaOculta = true;
@@ -48,10 +51,15 @@ class RegisterViewModel extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
 
-      await _authService.cadastrarComEmail(
-        email,
-        senha,
-      ); // ← usando sua função personalizada
+      final credencial = await _authService.cadastrarComEmail(email, senha);
+      final uid = credencial.user?.uid;
+
+      if (uid != null) {
+        await _firestoreService.salvarDadosUsuario(uid, {
+          'email': email,
+          'criadoEm': Timestamp.now(),
+        });
+      }
 
       return null; // sucesso
     } on FirebaseAuthException catch (e) {
