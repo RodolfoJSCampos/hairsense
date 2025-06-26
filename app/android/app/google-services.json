@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "660846289918-6jurd92pefe3uis9pka48eq4ui0dpath.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.seuprojeto.hairsense",
+            "certificate_hash": "2ece2f00f9b3889ba024df37e261a0e54219e040"
+          }
+        },
+        {
           "client_id": "660846289918-idul95ioifpitu2cb07co45ko5oqh48c.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -34,7 +42,7 @@
               "client_id": "660846289918-e739937q7fi13406m9a342j0nve5u4qk.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.seuprojeto.hairsense"
+                "bundle_id": "com.example.tcc"
               }
             }
           ]
