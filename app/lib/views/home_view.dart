@@ -3,12 +3,41 @@ import 'package:provider/provider.dart';
 import '../widgets/app_bar_config.dart';
 import '../viewmodels/home_view_model.dart';
 import '../models/card_item_model.dart';
+import '../services/usuario_validador_service.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
   @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  bool _validando = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _validarPerfil();
+  }
+
+  Future<void> _validarPerfil() async {
+    final ok = await UsuarioValidadorService().validarUsuarioLogadoComPerfil();
+    if (!ok && mounted) {
+      Navigator.pushReplacementNamed(context, '/login');
+    } else {
+      setState(() => _validando = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_validando) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return ChangeNotifierProvider(
       create: (_) => HomeViewModel(),
       child: Scaffold(

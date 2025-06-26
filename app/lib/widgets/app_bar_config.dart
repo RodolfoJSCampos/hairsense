@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
+import '../views/login_view.dart';
 import '../services/theme_controller.dart'; // Garante que esteja importando o controlador
 
 class AppBarConfig extends StatelessWidget implements PreferredSizeWidget {
@@ -48,7 +49,11 @@ class AppBarConfig extends StatelessWidget implements PreferredSizeWidget {
                         context,
                         listen: false,
                       );
-                      themeController.alternarTema();
+                      final novoTema =
+                          !themeController.isDarkMode; // inverte o tema atual
+                      themeController.alternarTema(
+                        novoTema,
+                      ); // aplica e salva no Firestore
                     });
                   },
                 ),
@@ -60,9 +65,7 @@ class AppBarConfig extends StatelessWidget implements PreferredSizeWidget {
                         context: context,
                         applicationName: 'HairSense',
                         applicationVersion: '1.0.1',
-                        children: const [
-                          Text('App de gestão de beleza'),
-                        ],
+                        children: const [Text('App de gestão de beleza')],
                       );
                     });
                   },
@@ -72,7 +75,19 @@ class AppBarConfig extends StatelessWidget implements PreferredSizeWidget {
                   onTap: () {
                     Future.delayed(Duration.zero, () async {
                       await FirebaseAuth.instance.signOut();
-                      Navigator.popUntil(context, (route) => route.isFirst);
+                      final themeController = Provider.of<ThemeController>(
+                        context,
+                        listen: false,
+                      );
+                      await themeController.alternarTema(
+                        false,
+                      ); // volta pro tema claro
+
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginView()),
+                        (route) => false, // remove todas as rotas anteriores
+                      );
                     });
                   },
                 ),

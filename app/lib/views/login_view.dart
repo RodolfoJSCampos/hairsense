@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../viewmodels/login_view_model.dart';
 import '../viewmodels/register_view_model.dart';
 import '../views/register_view.dart';
-import '../views/home_view.dart'; // Adiciona esta linha!
+import '../views/home_view.dart';
+import '../services/theme_controller.dart'; // Adicione isso
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -11,17 +14,32 @@ class LoginView extends StatelessWidget {
   void _mostrarAlerta(BuildContext context, String titulo, String mensagem) {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: Text(titulo),
-        content: Text(mensagem),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+      builder:
+          (_) => AlertDialog(
+            title: Text(titulo),
+            content: Text(mensagem),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
           ),
-        ],
-      ),
     );
+  }
+
+  Future<void> _aplicarTemaSalvo(BuildContext context) async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    final doc =
+        await FirebaseFirestore.instance.collection('usuarios').doc(uid).get();
+
+    final temaEscuro = doc.data()?['temaEscuro'] ?? false;
+    Provider.of<ThemeController>(
+      context,
+      listen: false,
+    ).alternarTema(temaEscuro);
   }
 
   @override
@@ -53,7 +71,9 @@ class LoginView extends StatelessWidget {
                 decoration: _inputDeco('Senha').copyWith(
                   suffixIcon: IconButton(
                     icon: Icon(
-                      loginVM.senhaOculta ? Icons.visibility_off : Icons.visibility,
+                      loginVM.senhaOculta
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                       color: const Color.fromARGB(255, 255, 255, 255),
                     ),
                     onPressed: loginVM.toggleSenhaVisibilidade,
@@ -71,7 +91,11 @@ class LoginView extends StatelessWidget {
                     if (erro != null) {
                       _mostrarAlerta(context, 'Erro', erro);
                     } else {
-                      _mostrarAlerta(context, 'Sucesso', 'E-mail de recuperação enviado!');
+                      _mostrarAlerta(
+                        context,
+                        'Sucesso',
+                        'E-mail de recuperação enviado!',
+                      );
                     }
                   },
                   child: const Text('Esqueci minha senha...'),
@@ -83,25 +107,26 @@ class LoginView extends StatelessWidget {
               loginVM.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : ElevatedButton(
-                      onPressed: () async {
-                        final erro = await loginVM.loginComEmail();
-                        if (erro != null) {
-                          _mostrarAlerta(context, 'Erro', erro);
-                        } else {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (_) => const HomeView()),
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(50),
-                        foregroundColor: Colors.black87,
-                        backgroundColor: Colors.white,
-                        side: const BorderSide(color: Colors.grey),
-                      ),
-                      child: const Text('Entrar'),
+                    onPressed: () async {
+                      final erro = await loginVM.loginComEmail();
+                      if (erro != null) {
+                        _mostrarAlerta(context, 'Erro', erro);
+                      } else {
+                        await _aplicarTemaSalvo(context);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const HomeView()),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(50),
+                      foregroundColor: Colors.black87,
+                      backgroundColor: Colors.white,
+                      side: const BorderSide(color: Colors.grey),
                     ),
+                    child: const Text('Entrar'),
+                  ),
 
               const SizedBox(height: 16),
 
@@ -111,13 +136,18 @@ class LoginView extends StatelessWidget {
                   if (erro != null) {
                     _mostrarAlerta(context, 'Erro', erro);
                   } else {
+                    await _aplicarTemaSalvo(context);
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (_) => const HomeView()),
                     );
                   }
                 },
-                icon: Image.asset('assets/google_logo.png', height: 20, width: 20),
+                icon: Image.asset(
+                  'assets/google_logo.png',
+                  height: 20,
+                  width: 20,
+                ),
                 label: const Text('Entrar com Google'),
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size.fromHeight(50),
@@ -135,10 +165,11 @@ class LoginView extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => ChangeNotifierProvider(
-                          create: (_) => RegisterViewModel(),
-                          child: const RegisterView(),
-                        ),
+                        builder:
+                            (_) => ChangeNotifierProvider(
+                              create: (_) => RegisterViewModel(),
+                              child: const RegisterView(),
+                            ),
                       ),
                     );
                   },

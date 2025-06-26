@@ -1,26 +1,22 @@
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/auth_service.dart';
 
 class LoginViewModel extends ChangeNotifier {
-  // Controladores para os campos de e-mail e senha na tela de login
   final emailController = TextEditingController();
   final senhaController = TextEditingController();
 
-  bool isLoading =
-      false; // Usado para exibir indicador de progresso durante login
-  bool senhaOculta = true; // Controla visibilidade do campo de senha
+  bool isLoading = false;
+  bool senhaOculta = true;
 
-  final AuthService _authService =
-      AuthService(); // Serviço responsável pela autenticação
+  final AuthService _authService = AuthService();
 
-  // Alterna entre mostrar ou ocultar a senha digitada
   void toggleSenhaVisibilidade() {
     senhaOculta = !senhaOculta;
     notifyListeners();
   }
 
-  // Realiza login com e-mail e senha utilizando o AuthService
   Future<String?> loginComEmail() async {
     if (emailController.text.isEmpty || senhaController.text.isEmpty) {
       return 'Preencha todos os campos.';
@@ -35,9 +31,11 @@ class LoginViewModel extends ChangeNotifier {
         senhaController.text,
       );
 
-      return null; // Login bem-sucedido
+      await verificarOuCriarPerfil(); // Garante que perfil seja criado
+
+      return null;
     } on FirebaseAuthException catch (e) {
-      print('Erro FirebaseAuth: ${e.code}'); // <-- Esse print aqui
+      print('Erro FirebaseAuth: ${e.code}');
       return _traduzErroFirebase(e.code);
     } finally {
       isLoading = false;
@@ -45,7 +43,6 @@ class LoginViewModel extends ChangeNotifier {
     }
   }
 
-  // Realiza login com uma conta do Google integrada ao Firebase
   Future<String?> loginComGoogle() async {
     try {
       isLoading = true;
@@ -53,16 +50,17 @@ class LoginViewModel extends ChangeNotifier {
 
       await _authService.loginWithGoogle();
 
-      return null; // Login com Google bem-sucedido
+      await verificarOuCriarPerfil(); // Garante que perfil seja criado
+
+      return null;
     } on FirebaseAuthException catch (e) {
-      return _traduzErroFirebase(e.code); // Erro amigável
+      return _traduzErroFirebase(e.code);
     } finally {
       isLoading = false;
       notifyListeners();
     }
   }
 
-  // Envia e-mail de recuperação de senha para o e-mail informado
   Future<String?> recuperarSenha() async {
     final email = emailController.text.trim();
 
@@ -72,7 +70,7 @@ class LoginViewModel extends ChangeNotifier {
 
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-      return null; // E-mail enviado com sucesso
+      return null;
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'invalid-email':
@@ -87,7 +85,25 @@ class LoginViewModel extends ChangeNotifier {
     }
   }
 
-  // Converte códigos de erro do Firebase em mensagens amigáveis para o usuário
+  Future<void> verificarOuCriarPerfil() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      final docRef =
+          FirebaseFirestore.instance.collection('usuarios').doc(user.uid);
+      final docSnapshot = await docRef.get();
+
+      if (!docSnapshot.exists) {
+        await docRef.set({
+          'nome': user.displayName ?? 'Usuário',
+          'email': user.email ?? '',
+          'temaEscuro': false,
+          'criadoEm': FieldValue.serverTimestamp(),
+        });
+      }
+    }
+  }
+
   String _traduzErroFirebase(String code) {
     switch (code) {
       case 'invalid-email':
@@ -103,13 +119,12 @@ class LoginViewModel extends ChangeNotifier {
       case 'network-request-failed':
         return 'Falha de conexão. Verifique sua internet.';
       case 'invalid-credential':
-        return 'e-mail ou senha inválidas.';
+        return 'E-mail ou senha inválidos.';
       default:
         return 'Erro inesperado ao fazer login.';
     }
   }
 
-  // Libera os recursos dos TextEditingControllers quando não forem mais usados
   void disposeControllers() {
     emailController.dispose();
     senhaController.dispose();
