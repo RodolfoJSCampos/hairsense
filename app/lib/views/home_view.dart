@@ -4,6 +4,7 @@ import '../widgets/app_bar_config.dart';
 import '../viewmodels/home_view_model.dart';
 import '../models/card_item_model.dart';
 import '../services/usuario_validador_service.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -13,6 +14,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  final PageController _pageController = PageController(viewportFraction: 0.85);
   bool _validando = true;
 
   @override
@@ -31,6 +33,12 @@ class _HomeViewState extends State<HomeView> {
   }
 
   @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (_validando) {
       return const Scaffold(
@@ -45,16 +53,33 @@ class _HomeViewState extends State<HomeView> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Consumer<HomeViewModel>(
           builder: (context, vm, _) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24.0),
-              child: PageView.builder(
-                controller: PageController(viewportFraction: 0.85),
-                itemCount: vm.cards.length,
-                itemBuilder: (context, index) {
-                  final card = vm.cards[index];
-                  return _CardItem(card: card);
-                },
-              ),
+            return Column(
+              children: [
+                const SizedBox(height: 24),
+                Expanded(
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemCount: vm.cards.length,
+                    itemBuilder: (context, index) {
+                      final card = vm.cards[index];
+                      return _CardItem(card: card);
+                    },
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SmoothPageIndicator(
+                  controller: _pageController,
+                  count: vm.cards.length,
+                  effect: WormEffect(
+                    dotHeight: 10,
+                    dotWidth: 10,
+                    spacing: 12,
+                    dotColor: Colors.grey.shade400,
+                    activeDotColor: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
             );
           },
         ),
