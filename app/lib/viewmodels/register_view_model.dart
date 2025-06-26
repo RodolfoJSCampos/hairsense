@@ -33,7 +33,6 @@ class RegisterViewModel extends ChangeNotifier {
         // Cria perfil básico no Firestore com nome, e-mail e UID
         await _firestoreService.salvarDadosUsuario(user.uid, {
           'email': user.email,
-          'nome': user.displayName,
           'criadoEm': Timestamp.now(),
           'loginGoogle': true,
         });

@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
             title: 'HairSense',
             theme: ThemeData.light(),
             darkTheme: ThemeData.dark(),
-            themeMode: tema.temaAtual,
+            themeMode: tema.isDarkMode ? ThemeMode.dark : ThemeMode.light,
             home: const LoginView(),
           );
         },
