@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/services.dart';
 
 class RegisterViewModel extends ChangeNotifier {
   final emailController = TextEditingController();
@@ -21,7 +20,7 @@ class RegisterViewModel extends ChangeNotifier {
   }
 
   // Cadastro com Google + criação de documento no Firestore
-  Future<String?> registrarComGoogle() async {
+  Future<String?> registerWithGoogle() async {
     try {
       isLoading = true;
       notifyListeners();

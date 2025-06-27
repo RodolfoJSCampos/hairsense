@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../widgets/app_bar_config.dart';
-import '../viewmodels/home_view_model.dart';
-import '../models/card_item_model.dart';
-import '../services/usuario_validador_service.dart';
+import '../views/views.dart';        
+import '../viewmodels/viewmodels.dart'; 
+import '../models/models.dart';       
+import '../services/services.dart';   
+import '../widgets/widgets.dart';  
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -28,7 +29,6 @@ class _HomeViewState extends State<HomeView> {
     final ok = await UsuarioValidadorService()
         .validarUsuarioLogadoComPerfil();
     if (!ok && mounted) {
-      // aqui usamos o nome de rota padrão
       Navigator.pushReplacementNamed(context, '/login_view');
     } else {
       setState(() => _validando = false);
@@ -49,54 +49,46 @@ class _HomeViewState extends State<HomeView> {
       );
     }
 
-    return ChangeNotifierProvider(
-      create: (_) => HomeViewModel(),
-      child: Scaffold(
-        appBar: const AppBarConfig(),
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: Consumer<HomeViewModel>(
-          builder: (context, vm, _) {
-            return Column(
-              children: [
-                const SizedBox(height: 24),
-                Expanded(
-                  child: PageView.builder(
-                    controller: _pageController,
-                    itemCount: vm.cards.length,
-                    itemBuilder: (context, index) {
-                      final card = vm.cards[index];
-                      return GestureDetector(
-                        onTap: () {
-                          // só dispara navegação se for o card de Ingredientes
-                          if (card.titulo.toLowerCase() ==
-                              'ingredientes') {
-                            Navigator.pushNamed(
-                                context, '/ingredients_view');
-                          }
-                        },
-                        child: _CardItem(card: card),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 12),
-                SmoothPageIndicator(
-                  controller: _pageController,
-                  count: vm.cards.length,
-                  effect: WormEffect(
-                    dotHeight: 10,
-                    dotWidth: 10,
-                    spacing: 12,
-                    dotColor: Colors.grey.shade400,
-                    activeDotColor:
-                        Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                const SizedBox(height: 24),
-              ],
-            );
-          },
-        ),
+    // Aqui pegamos o VM que vem do main.dart
+    final vm = context.watch<HomeViewModel>();
+
+    return Scaffold(
+      appBar: const AppBarConfig(),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: Column(
+        children: [
+          const SizedBox(height: 24),
+          Expanded(
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: vm.cards.length,
+              itemBuilder: (context, index) {
+                final card = vm.cards[index];
+                return GestureDetector(
+                  onTap: () {
+                    if (card.titulo.toLowerCase() == 'ingredientes') {
+                      Navigator.pushNamed(context, '/ingredients_view');
+                    }
+                  },
+                  child: _CardItem(card: card),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 12),
+          SmoothPageIndicator(
+            controller: _pageController,
+            count: vm.cards.length,
+            effect: WormEffect(
+              dotHeight: 10,
+              dotWidth: 10,
+              spacing: 12,
+              dotColor: Colors.grey.shade400,
+              activeDotColor: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+          const SizedBox(height: 24),
+        ],
       ),
     );
   }
@@ -104,7 +96,6 @@ class _HomeViewState extends State<HomeView> {
 
 class _CardItem extends StatelessWidget {
   final CardItemModel card;
-
   const _CardItem({required this.card});
 
   @override
@@ -112,8 +103,9 @@ class _CardItem extends StatelessWidget {
     return Center(
       child: Card(
         elevation: 6,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: Container(
           width: 320,
           height: 400,

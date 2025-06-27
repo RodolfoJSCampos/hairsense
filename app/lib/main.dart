@@ -2,18 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 
-import 'services/usuario_validador_service.dart';
-import 'services/theme_controller.dart';
-
-import 'viewmodels/login_view_model.dart';
-import 'viewmodels/register_view_model.dart';
-import 'viewmodels/ingredients_view_model.dart';  // <– não esqueça deste import!
-
-import 'views/login_view.dart';
-import 'views/register_view.dart';
-import 'views/home_view.dart';
-import 'views/ingredients_view.dart';
-
+import 'services/services.dart';
+import 'viewmodels/viewmodels.dart';
+import 'views/views.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -45,12 +36,18 @@ class MyApp extends StatelessWidget {
             initialRoute: '/login_view',
             routes: {
               '/login_view': (c) => const LoginView(),
-              '/register_view': (c) => ChangeNotifierProvider(
+              '/register_view':
+                  (c) => ChangeNotifierProvider(
                     create: (_) => RegisterViewModel(),
                     child: const RegisterView(),
                   ),
-              '/home_view': (c) => const HomeView(),
-              '/ingredients_view': (c) => ChangeNotifierProvider(
+              '/home_view':
+                  (c) => ChangeNotifierProvider(
+                    create: (_) => HomeViewModel(),
+                    child: const HomeView(),
+                  ),
+              '/ingredients_view':
+                  (c) => ChangeNotifierProvider(
                     create: (_) => IngredientsViewModel(),
                     child: const IngredientsView(),
                   ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/register_view_model.dart';
+import '../viewmodels/viewmodels.dart';
 
 class RegisterView extends StatelessWidget {
   const RegisterView({super.key});
@@ -78,7 +78,7 @@ class RegisterView extends StatelessWidget {
               const SizedBox(height: 16),
               OutlinedButton.icon(
                 onPressed: () async {
-                  final erro = await cadastroVM.registrarComGoogle();
+                  final erro = await cadastroVM.registerWithGoogle();
                   if (erro != null) {
                     _mostrarAlerta(context, 'Erro', erro);
                   } else {

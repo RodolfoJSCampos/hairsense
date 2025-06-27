@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../viewmodels/login_view_model.dart';
-import '../viewmodels/register_view_model.dart';
-import '../views/register_view.dart';
-import '../views/home_view.dart';
-import '../services/theme_controller.dart'; // Adicione isso
+import '../viewmodels/viewmodels.dart';
+import '../views/views.dart';
+import '../services/services.dart'; 
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});

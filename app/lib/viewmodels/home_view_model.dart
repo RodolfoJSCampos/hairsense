@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/card_item_model.dart';
+import '../models/models.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final List<CardItemModel> cards = [

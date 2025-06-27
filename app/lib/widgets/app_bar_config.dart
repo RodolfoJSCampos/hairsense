@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
-import '../views/login_view.dart';
-import '../services/theme_controller.dart'; // Garante que esteja importando o controlador
+import '../services/services.dart';
+import '../views/views.dart';
+
 
 class AppBarConfig extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onRefresh;

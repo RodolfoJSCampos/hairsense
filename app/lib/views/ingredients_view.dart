@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/ingredients_view_model.dart';
+import '../viewmodels/viewmodels.dart';
 
 class IngredientsView extends StatelessWidget {
   const IngredientsView({Key? key}) : super(key: key);
