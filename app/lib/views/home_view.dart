@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
 import '../widgets/app_bar_config.dart';
 import '../viewmodels/home_view_model.dart';
 import '../models/card_item_model.dart';
 import '../services/usuario_validador_service.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -24,9 +25,11 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<void> _validarPerfil() async {
-    final ok = await UsuarioValidadorService().validarUsuarioLogadoComPerfil();
+    final ok = await UsuarioValidadorService()
+        .validarUsuarioLogadoComPerfil();
     if (!ok && mounted) {
-      Navigator.pushReplacementNamed(context, '/login');
+      // aqui usamos o nome de rota padrão
+      Navigator.pushReplacementNamed(context, '/login_view');
     } else {
       setState(() => _validando = false);
     }
@@ -62,7 +65,17 @@ class _HomeViewState extends State<HomeView> {
                     itemCount: vm.cards.length,
                     itemBuilder: (context, index) {
                       final card = vm.cards[index];
-                      return _CardItem(card: card);
+                      return GestureDetector(
+                        onTap: () {
+                          // só dispara navegação se for o card de Ingredientes
+                          if (card.titulo.toLowerCase() ==
+                              'ingredientes') {
+                            Navigator.pushNamed(
+                                context, '/ingredients_view');
+                          }
+                        },
+                        child: _CardItem(card: card),
+                      );
                     },
                   ),
                 ),
@@ -75,7 +88,8 @@ class _HomeViewState extends State<HomeView> {
                     dotWidth: 10,
                     spacing: 12,
                     dotColor: Colors.grey.shade400,
-                    activeDotColor: Theme.of(context).colorScheme.primary,
+                    activeDotColor:
+                        Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -98,7 +112,8 @@ class _CardItem extends StatelessWidget {
     return Center(
       child: Card(
         elevation: 6,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Container(
           width: 320,
           height: 400,
@@ -110,9 +125,10 @@ class _CardItem extends StatelessWidget {
               const SizedBox(height: 24),
               Text(
                 card.titulo,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineSmall
+                    ?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
               Text(
