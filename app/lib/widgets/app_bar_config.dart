@@ -1,64 +1,65 @@
-// lib/widgets/app_bar_config.dart
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
+
 import '../services/services.dart';
 import '../views/views.dart';
 
-class AppBarConfig extends StatelessWidget implements PreferredSizeWidget {
-  final String title;            // ← novo
-  final bool showBackButton;     // ← novo
+class AppBarConfig extends StatefulWidget implements PreferredSizeWidget {
+  final String title;
+  final bool showBackButton;
   final VoidCallback? onRefresh;
+  final VoidCallback? onSearch;
+  final VoidCallback? onNotifications;
 
   const AppBarConfig({
     Key? key,
-    this.title = 'HairSense',    
-    this.showBackButton = false, 
+    this.title = 'HairSense',
+    this.showBackButton = false,
     this.onRefresh,
+    this.onSearch,
+    this.onNotifications,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      centerTitle: true,
-      title: Text(title,
-          style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
-      automaticallyImplyLeading: false,
-      leading: showBackButton
-          ? IconButton(
-              icon: Icon(Icons.arrow_back,
-                  color: isDark ? Colors.white : Colors.black87),
-              onPressed: () => Navigator.maybePop(context),
-            )
-          : null,
-      actions: [
-        if (onRefresh != null)
-          IconButton(
-            icon: Icon(Icons.refresh,
-                color: isDark ? Colors.white : Colors.black87),
-            onPressed: () {
-              onRefresh!();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Atualizando…')),
-              );
-            },
-          ),
-        IconButton(
-          icon: Icon(Icons.settings,
-              color: isDark ? Colors.white : Colors.black87),
-          onPressed: () => _openMenu(context),
-        ),
-      ],
+  @override
+  State<AppBarConfig> createState() => _AppBarConfigState();
+}
+
+class _AppBarConfigState extends State<AppBarConfig>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _gearController;
+  bool _menuOpen = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _gearController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
     );
   }
 
-  void _openMenu(BuildContext context) {
-    showMenu(
+  @override
+  void dispose() {
+    _gearController.dispose();
+    super.dispose();
+  }
+
+  void _onSettingsTap() async {
+    // dispara a rotação
+    _gearController.forward(from: 0.0);
+
+    // se já tiver um menu aberto, fecha
+    if (_menuOpen) {
+      Navigator.of(context).pop();
+    }
+
+    // abre o menu e marca estado
+    setState(() => _menuOpen = true);
+    await showMenu(
       context: context,
       position: const RelativeRect.fromLTRB(1000, 80, 16, 0),
       items: [
@@ -99,8 +100,62 @@ class AppBarConfig extends StatelessWidget implements PreferredSizeWidget {
         ),
       ],
     );
+    
+    setState(() => _menuOpen = false);
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final iconColor = isDark ? Colors.white : Colors.black87;
+
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      centerTitle: true,
+      automaticallyImplyLeading: false,
+      leading: widget.showBackButton
+          ? IconButton(
+              icon: Icon(Icons.arrow_back, color: iconColor),
+              onPressed: () => Navigator.maybePop(context),
+            )
+          : null,
+      title: Text(widget.title, style: TextStyle(color: iconColor)),
+      actions: [
+        if (widget.onSearch != null)
+          IconButton(
+            icon: Icon(Icons.search, color: iconColor),
+            onPressed: widget.onSearch,
+          ),
+        if (widget.onNotifications != null)
+          IconButton(
+            icon: Icon(Icons.notifications_none, color: iconColor),
+            onPressed: widget.onNotifications,
+          ),
+        if (widget.onRefresh != null)
+          IconButton(
+            icon: Icon(Icons.refresh, color: iconColor),
+            onPressed: () {
+              widget.onRefresh!();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Atualizando…')),
+              );
+            },
+          ),
+
+     
+        RotationTransition(
+          turns: Tween<double>(begin: 0, end: 0.5).animate(
+            CurvedAnimation(parent: _gearController, curve: Curves.easeInOut),
+          ),
+          child: IconButton(
+            icon: Icon(Icons.settings, color: iconColor),
+            onPressed: _onSettingsTap,
+          ),
+        ),
+
+        const SizedBox(width: 8),
+      ],
+    );
+  }
 }

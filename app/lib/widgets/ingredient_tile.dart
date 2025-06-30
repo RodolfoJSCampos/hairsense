@@ -19,11 +19,10 @@ class IngredientTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            // 3% de preto
             color: Colors.black.withAlpha((0.03 * 255).round()),
             blurRadius: 4,
             offset: const Offset(0, 1),
-          )
+          ),
         ],
       ),
       child: Row(
@@ -40,12 +39,11 @@ class IngredientTile extends StatelessWidget {
           ),
           const SizedBox(width: 10),
 
-          // nome e descrição
+          // nome e descrição com fade
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // título com elipse
                 Text(
                   ingredient.inciName,
                   maxLines: 1,
@@ -56,8 +54,6 @@ class IngredientTile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
-
-                // descrição com gradiente de fade
                 SizedBox(
                   height: 20,
                   child: ShaderMask(
@@ -83,9 +79,9 @@ class IngredientTile extends StatelessWidget {
             ),
           ),
 
-          // botão de adicionar
+          // botão de adicionar com ícone "add"
           IconButton(
-            icon: const Icon(Icons.add_circle_outline, size: 20),
+            icon: const Icon(Icons.add, size: 20),
             color: Theme.of(context).colorScheme.primary,
             onPressed: () {
               // ação de adicionar

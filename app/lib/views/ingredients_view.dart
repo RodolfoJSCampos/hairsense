@@ -1,5 +1,3 @@
-// lib/views/ingredients_view.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,12 +13,26 @@ class IngredientsView extends StatefulWidget {
 
 class _IngredientsViewState extends State<IngredientsView> {
   late final IngredientsViewModel vm;
+  late final ScrollController _scrollCtrl;
 
   @override
   void initState() {
     super.initState();
     vm = context.read<IngredientsViewModel>();
+    _scrollCtrl = ScrollController()
+      ..addListener(() {
+        if (_scrollCtrl.position.pixels >=
+            _scrollCtrl.position.maxScrollExtent - 100) {
+          vm.loadMore();
+        }
+      });
     WidgetsBinding.instance.addPostFrameCallback((_) => vm.init());
+  }
+
+  @override
+  void dispose() {
+    _scrollCtrl.dispose();
+    super.dispose();
   }
 
   @override
@@ -34,14 +46,14 @@ class _IngredientsViewState extends State<IngredientsView> {
       ),
       body: Column(
         children: [
-          // search bar...
+          // Search
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: TextField(
               onChanged: vm.search,
               decoration: InputDecoration(
                 hintText: 'Buscar…',
-                prefixIcon: const Icon(Icons.search, size: 20),
+                prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: Theme.of(context).cardColor,
                 border: OutlineInputBorder(
@@ -54,7 +66,7 @@ class _IngredientsViewState extends State<IngredientsView> {
             ),
           ),
 
-          // lista com separador
+          // Lista
           Expanded(
             child: Builder(builder: (_) {
               if (vm.isLoading) {
@@ -62,22 +74,27 @@ class _IngredientsViewState extends State<IngredientsView> {
               }
               if (vm.hasError) {
                 return Center(
-                    child: Text('Erro: ${vm.errorMessage}',
-                        textAlign: TextAlign.center));
+                  child: Text(
+                    'Erro: ${vm.errorMessage}',
+                    textAlign: TextAlign.center,
+                  ),
+                );
               }
               if (vm.displayed.isEmpty) {
-                return const Center(child: Text('Nenhum ingrediente'));
+                return const Center(child: Text('Nenhum ingrediente encontrado'));
               }
+
               return ListView.separated(
+                controller: _scrollCtrl,
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 itemCount: vm.displayed.length,
-                separatorBuilder: (ctx, idx) => const Divider(
+                separatorBuilder: (_, __) => const Divider(
                   height: 1,
                   thickness: 0.5,
                   indent: 16,
                   endIndent: 16,
                 ),
-                itemBuilder: (ctx, i) {
+                itemBuilder: (_, i) {
                   return IngredientTile(ingredient: vm.displayed[i]);
                 },
               );

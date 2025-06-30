@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../viewmodels/viewmodels.dart';  // traz HomeViewModel
-import '../models/models.dart';          // traz CardItemModel
-import '../services/services.dart';      // traz UsuarioValidadorService
-import '../widgets/widgets.dart';        // traz AppBarConfig
+import '../viewmodels/viewmodels.dart';  
+import '../models/models.dart';          
+import '../services/services.dart';      
+import '../widgets/widgets.dart';        
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
