@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../views/views.dart';        
-import '../viewmodels/viewmodels.dart'; 
-import '../models/models.dart';       
-import '../services/services.dart';   
-import '../widgets/widgets.dart';  
+import '../viewmodels/viewmodels.dart';  // traz HomeViewModel
+import '../models/models.dart';          // traz CardItemModel
+import '../services/services.dart';      // traz UsuarioValidadorService
+import '../widgets/widgets.dart';        // traz AppBarConfig
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -16,7 +15,8 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  final PageController _pageController = PageController(viewportFraction: 0.85);
+  final PageController _pageController =
+      PageController(viewportFraction: 0.85);
   bool _validando = true;
 
   @override
@@ -49,11 +49,11 @@ class _HomeViewState extends State<HomeView> {
       );
     }
 
-    // Aqui pegamos o VM que vem do main.dart
+    // VM já injetado no main.dart pela rota /home_view
     final vm = context.watch<HomeViewModel>();
 
     return Scaffold(
-      appBar: const AppBarConfig(),
+      appBar: const AppBarConfig(), 
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
