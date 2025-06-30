@@ -1,7 +1,10 @@
 // lib/widgets/ingredient_tile.dart
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import '../models/ingredient_model.dart';
+import '../viewmodels/ingredients_view_model.dart';
 
 class IngredientTile extends StatelessWidget {
   final IngredientModel ingredient;
@@ -10,7 +13,12 @@ class IngredientTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<IngredientsViewModel>();
+    final isSelected = vm.selected.contains(ingredient);
+
     final cardColor = Theme.of(context).cardColor;
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       padding: const EdgeInsets.all(8),
@@ -26,8 +34,9 @@ class IngredientTile extends StatelessWidget {
         ],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ícone ou placeholder
+          // Ícone ou placeholder
           Container(
             width: 40,
             height: 40,
@@ -39,11 +48,12 @@ class IngredientTile extends StatelessWidget {
           ),
           const SizedBox(width: 10),
 
-          // nome e descrição com fade
+          // Coluna de textos
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Nome
                 Text(
                   ingredient.inciName,
                   maxLines: 1,
@@ -53,39 +63,67 @@ class IngredientTile extends StatelessWidget {
                     fontSize: 14,
                   ),
                 ),
-                const SizedBox(height: 2),
-                SizedBox(
-                  height: 20,
-                  child: ShaderMask(
-                    shaderCallback: (bounds) {
-                      return const LinearGradient(
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                        colors: [Colors.black, Colors.transparent],
-                      ).createShader(
-                        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                      );
-                    },
-                    blendMode: BlendMode.dstIn,
-                    child: Text(
-                      ingredient.description,
-                      maxLines: 1,
-                      overflow: TextOverflow.clip,
-                      style: Theme.of(context).textTheme.bodySmall,
+
+                const SizedBox(height: 4),
+
+                // Descrição
+                Text(
+                  ingredient.description,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+
+                const SizedBox(height: 6),
+
+                // Lista de funções como chips
+                if (ingredient.functions.isNotEmpty)
+                  SizedBox(
+                    height: 24, // altura fixa para os chips
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children:
+                            ingredient.functions.map((func) {
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 4),
+                                child: Chip(
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  visualDensity: const VisualDensity(
+                                    horizontal: -4,
+                                    vertical: -4,
+                                  ),
+                                  padding: EdgeInsets.zero,
+                                  labelPadding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 0,
+                                  ),
+                                  label: Text(
+                                    func,
+                                    style: const TextStyle(fontSize: 10),
+                                  ),
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.primary.withOpacity(0.1),
+                                ),
+                              );
+                            }).toList(),
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           ),
 
-          // botão de adicionar com ícone "add"
+          // Botão de selecionar
           IconButton(
-            icon: const Icon(Icons.add, size: 20),
-            color: Theme.of(context).colorScheme.primary,
-            onPressed: () {
-              // ação de adicionar
-            },
+            icon: Icon(
+              isSelected ? Icons.check_circle : Icons.add_circle_outline,
+              size: 20,
+            ),
+            color: primaryColor,
+            onPressed: () => vm.toggleSelected(ingredient),
             splashRadius: 20,
           ),
         ],

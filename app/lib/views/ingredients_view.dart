@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../viewmodels/viewmodels.dart';
 import '../widgets/widgets.dart';
+import '../views/views.dart';
 
 class IngredientsView extends StatefulWidget {
   const IngredientsView({super.key});
@@ -19,13 +20,13 @@ class _IngredientsViewState extends State<IngredientsView> {
   void initState() {
     super.initState();
     vm = context.read<IngredientsViewModel>();
-    _scrollCtrl = ScrollController()
-      ..addListener(() {
-        if (_scrollCtrl.position.pixels >=
-            _scrollCtrl.position.maxScrollExtent - 100) {
-          vm.loadMore();
-        }
-      });
+    _scrollCtrl =
+        ScrollController()..addListener(() {
+          if (_scrollCtrl.position.pixels >=
+              _scrollCtrl.position.maxScrollExtent - 100) {
+            vm.loadMore();
+          }
+        });
     WidgetsBinding.instance.addPostFrameCallback((_) => vm.init());
   }
 
@@ -40,10 +41,7 @@ class _IngredientsViewState extends State<IngredientsView> {
     final vm = context.watch<IngredientsViewModel>();
 
     return Scaffold(
-      appBar: const AppBarConfig(
-        title: 'Ingredientes',
-        showBackButton: true,
-      ),
+      appBar: const AppBarConfig(title: 'Ingredientes', showBackButton: true),
       body: Column(
         children: [
           // Search
@@ -60,48 +58,79 @@ class _IngredientsViewState extends State<IngredientsView> {
                   borderSide: BorderSide.none,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 0,
+                ),
               ),
             ),
           ),
 
           // Lista
           Expanded(
-            child: Builder(builder: (_) {
-              if (vm.isLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (vm.hasError) {
-                return Center(
-                  child: Text(
-                    'Erro: ${vm.errorMessage}',
-                    textAlign: TextAlign.center,
-                  ),
-                );
-              }
-              if (vm.displayed.isEmpty) {
-                return const Center(child: Text('Nenhum ingrediente encontrado'));
-              }
+            child: Builder(
+              builder: (_) {
+                if (vm.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (vm.hasError) {
+                  return Center(
+                    child: Text(
+                      'Erro: ${vm.errorMessage}',
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                }
+                if (vm.displayed.isEmpty) {
+                  return const Center(
+                    child: Text('Nenhum ingrediente encontrado'),
+                  );
+                }
 
-              return ListView.separated(
-                controller: _scrollCtrl,
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                itemCount: vm.displayed.length,
-                separatorBuilder: (_, __) => const Divider(
-                  height: 1,
-                  thickness: 0.5,
-                  indent: 16,
-                  endIndent: 16,
-                ),
-                itemBuilder: (_, i) {
-                  return IngredientTile(ingredient: vm.displayed[i]);
-                },
-              );
-            }),
+                return ListView.separated(
+                  controller: _scrollCtrl,
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  itemCount: vm.displayed.length,
+                  separatorBuilder:
+                      (_, __) => const Divider(
+                        height: 1,
+                        thickness: 0.5,
+                        indent: 16,
+                        endIndent: 16,
+                      ),
+                  itemBuilder: (_, i) {
+                    return IngredientTile(ingredient: vm.displayed[i]);
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),
+      // Barra de progresso no final da lista
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      // FAB que mostra contador de selecionados e navega para a tela de selecionados
+      floatingActionButton:
+      
+          vm.selected.isEmpty
+              ? null
+              : FloatingActionButton.extended(
+                icon: const Icon(Icons.list),
+                label: Text('${vm.selected.length}'),
+                onPressed: () {
+                  final vm = context.read<IngredientsViewModel>();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (ctx) {
+                        return ChangeNotifierProvider.value(
+                          value: vm,
+                          child: const SelectedIngredientsView(),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
     );
   }
 }
