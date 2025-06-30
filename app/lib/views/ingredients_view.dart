@@ -107,23 +107,48 @@ class _IngredientsViewState extends State<IngredientsView> {
           ),
         ],
       ),
+
       // Barra de progresso no final da lista
+      // dentro do Scaffold em IngredientsView
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      // FAB que mostra contador de selecionados e navega para a tela de selecionados
       floatingActionButton:
-      
           vm.selected.isEmpty
               ? null
               : FloatingActionButton.extended(
                 icon: const Icon(Icons.list),
-                label: Text('${vm.selected.length}'),
+                label: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('Minha Lista'),
+                    const SizedBox(width: 8),
+                    Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withOpacity(0.8),
+                        shape: BoxShape.circle,
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        '${vm.selected.length}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 onPressed: () {
-                  final vm = context.read<IngredientsViewModel>();
+                  final vmInstance = context.read<IngredientsViewModel>();
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (ctx) {
                         return ChangeNotifierProvider.value(
-                          value: vm,
+                          value: vmInstance,
                           child: const SelectedIngredientsView(),
                         );
                       },

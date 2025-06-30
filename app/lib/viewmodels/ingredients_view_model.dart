@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+
 import '../models/models.dart';
 
 class IngredientsViewModel extends ChangeNotifier {
@@ -56,7 +57,7 @@ class IngredientsViewModel extends ChangeNotifier {
     final q = query.toLowerCase().trim();
     final filtered = _all.where((ing) {
       return ing.inciName.toLowerCase().contains(q) ||
-             ing.description.toLowerCase().contains(q);
+          ing.description.toLowerCase().contains(q);
     }).toList();
 
     displayed = filtered.take(_pageSize).toList();
@@ -76,6 +77,16 @@ class IngredientsViewModel extends ChangeNotifier {
   // 3) opcional: limpar todos os selecionados
   void clearSelected() {
     selected.clear();
+    notifyListeners();
+  }
+
+  // 4) novo: reordena a lista de selecionados
+  /// Move o item de [oldIndex] para [newIndex] na lista `selected`.
+  void reorderSelected(int oldIndex, int newIndex) {
+    // o ReorderableListView passa newIndex já incrementado se arrastado pra frente
+    if (newIndex > oldIndex) newIndex -= 1;
+    final item = selected.removeAt(oldIndex);
+    selected.insert(newIndex, item);
     notifyListeners();
   }
 }

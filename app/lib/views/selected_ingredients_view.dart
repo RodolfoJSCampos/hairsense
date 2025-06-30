@@ -1,10 +1,9 @@
-// lib/views/selected_ingredients_view.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../viewmodels/ingredients_view_model.dart';
-import '../widgets/app_bar_config.dart'; // ou use AppBar normal se preferir
+import '../viewmodels/viewmodels.dart';
+import '../widgets/widgets.dart';
+import '../views/views.dart';          
 
 class SelectedIngredientsView extends StatelessWidget {
   const SelectedIngredientsView({Key? key}) : super(key: key);
@@ -20,18 +19,33 @@ class SelectedIngredientsView extends StatelessWidget {
       ),
       body: vm.selected.isEmpty
           ? const Center(child: Text('Nenhum ingrediente selecionado'))
-          : ListView.separated(
-              padding: const EdgeInsets.all(16),
+          : ReorderableListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 8),
               itemCount: vm.selected.length,
-              separatorBuilder: (_, __) => const Divider(),
-              itemBuilder: (_, i) {
-                final ing = vm.selected[i];
+              onReorder: vm.reorderSelected,
+              buildDefaultDragHandles: false,
+              itemBuilder: (context, index) {
+                final ing = vm.selected[index];
                 return ListTile(
+                  key: ValueKey(ing.cosingRef),
                   title: Text(ing.inciName),
                   subtitle: Text(ing.description),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete_outline, color: Colors.red),
-                    onPressed: () => vm.toggleSelected(ing),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ReorderableDragStartListener(
+                        index: index,
+                        child: const Icon(Icons.drag_handle),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.delete_outline,
+                          color: Colors.red,
+                        ),
+                        onPressed: () => vm.toggleSelected(ing),
+                      ),
+                    ],
                   ),
                 );
               },
@@ -41,18 +55,43 @@ class SelectedIngredientsView extends StatelessWidget {
           : Padding(
               padding: const EdgeInsets.all(16),
               child: ElevatedButton.icon(
-                icon: const Icon(Icons.search),
-                label: const Text('Pesquisar produtos'),
-                onPressed: () {
-                  // Por enquanto só feedback visual
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Funcionalidade de busca não implementada'),
-                    ),
-                  );
-                },
+                icon: const Icon(Icons.analytics),
+                label: const Text('Analisar'),      // já renomeado
+                onPressed: () => _showAnalysisDialog(context),
               ),
             ),
+    );
+  }
+
+  void _showAnalysisDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Atenção!'),
+        content: const Text(
+          'A ordem dos ingredientes é importante para uma análise precisa. '
+          'Os ingredientes aparecem no rótulo de acordo com a sua concentração '
+          'no produto. Tenha certeza que os produtos estão na mesma ordem em que '
+          'aparecem no rótulo.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Voltar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const AnalysisResultView(),
+                ),
+              );
+            },
+            child: const Text('Continuar'),
+          ),
+        ],
+      ),
     );
   }
 }
