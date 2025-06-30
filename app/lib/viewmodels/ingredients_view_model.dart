@@ -23,7 +23,7 @@ class IngredientsViewModel extends ChangeNotifier {
 
       // 1) carrega raw JSON
       final raw =
-          await rootBundle.loadString('assets/data/cosing_dados.json');
+          await rootBundle.loadString('assets/data/cosing_dados_pt-br.json');
       debugPrint('🔍 JSON carregado: ${raw.length} chars');
 
       // 2) decodifica
