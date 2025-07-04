@@ -13,12 +13,19 @@ class IngredientModel {
 
   factory IngredientModel.fromJson(Map<String, dynamic> json) {
     return IngredientModel(
-      cosingRef: json['COSING Ref No'] as String,
-      inciName: (json['INCI name'] as String).isEmpty
-          ? json['INN name'] as String
-          : json['INCI name'] as String,
-      description: json['Chem/IUPAC Name / Description'] as String,
-      functions: List<String>.from(json['Function'] ?? []),
+      cosingRef: json['cosingRef'] ?? '',
+      inciName: json['inciName'] ?? '',
+      description: json['description'] ?? '',
+      functions: List<String>.from(json['functions'] ?? []),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'cosingRef': cosingRef,
+      'inciName': inciName,
+      'description': description,
+      'functions': functions,
+    };
   }
 }
