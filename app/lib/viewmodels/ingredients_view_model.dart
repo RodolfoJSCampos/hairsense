@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/ingredient_model.dart';
@@ -10,6 +9,7 @@ class IngredientsViewModel extends ChangeNotifier {
   static const int _pageSize = 20;
 
   final List<IngredientModel> displayed = [];
+  final Set<String> _fetchedIds = {};    // controla IDs já adicionados
   DocumentSnapshot? _lastDoc;
   bool hasMore = true;
 
@@ -17,34 +17,32 @@ class IngredientsViewModel extends ChangeNotifier {
   bool hasError = false;
   String? errorMessage;
 
-  // busca atual (para pesquisa incremental)
-  String _currentFilter = '';
-
-  // selecionados
+  String _currentFilter = '';             // para busca incremental
   final List<IngredientModel> selected = [];
 
   /// Carrega a primeira página (sem filtro)
   Future<void> init() async {
+    displayed.clear();
+    _fetchedIds.clear();
     _lastDoc = null;
     _currentFilter = '';
     hasMore = true;
-    displayed.clear();
     await fetchNextPage();
   }
 
-  /// Pesquisa (texto) — reseta tudo e carrega a página 1 com filtro
+  /// Pesquisa (texto): reseta e carrega página 1 com filtro
   Future<void> search(String query) async {
+    displayed.clear();
+    _fetchedIds.clear();
     _lastDoc = null;
     _currentFilter = query.trim().toLowerCase();
     hasMore = true;
-    displayed.clear();
     await fetchNextPage();
   }
 
   /// Chama ao rolar para baixo
   Future<void> fetchNextPage() async {
     if (isLoading || !hasMore) return;
-
     isLoading = true;
     hasError = false;
     notifyListeners();
@@ -56,20 +54,21 @@ class IngredientsViewModel extends ChangeNotifier {
         filter: _currentFilter,
       );
 
-      // adiciona novos itens
-      displayed.addAll(page.items);
+      // adiciona apenas itens com ID nunca visto
+      for (final ing in page.items) {
+        if (_fetchedIds.add(ing.cosingRef)) {
+          displayed.add(ing);
+        }
+      }
 
-      // prepara cursor para a próxima página
       _lastDoc = page.lastDoc;
-
-      // se veio menos que o solicitado, acabou
       if (page.items.length < _pageSize) {
         hasMore = false;
       }
     } catch (e, st) {
       hasError = true;
       errorMessage = e.toString();
-      debugPrint('❌ erro ao carregar página de ingredientes: $e\n$st');
+      debugPrint('❌ fetchNextPage erro: $e\n$st');
     } finally {
       isLoading = false;
       notifyListeners();
@@ -92,11 +91,9 @@ class IngredientsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// reordena a lista de selecionados
+  /// reordena selecionados
   void reorderSelected(int oldIndex, int newIndex) {
-    if (newIndex > oldIndex) {
-      newIndex -= 1;
-    }
+    if (newIndex > oldIndex) newIndex -= 1;
     final item = selected.removeAt(oldIndex);
     selected.insert(newIndex, item);
     notifyListeners();

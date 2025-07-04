@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => ThemeController()),
+        ChangeNotifierProvider(create: (_) => IngredientsViewModel()),
       ],
       child: Consumer<ThemeController>(
         builder: (context, tema, _) {
@@ -46,15 +47,18 @@ class MyApp extends StatelessWidget {
             initialRoute: '/login_view',
             routes: {
               '/login_view': (c) => const LoginView(),
-              '/register_view': (c) => ChangeNotifierProvider(
+              '/register_view':
+                  (c) => ChangeNotifierProvider(
                     create: (_) => RegisterViewModel(),
                     child: const RegisterView(),
                   ),
-              '/home_view': (c) => ChangeNotifierProvider(
+              '/home_view':
+                  (c) => ChangeNotifierProvider(
                     create: (_) => HomeViewModel(),
                     child: const HomeView(),
                   ),
-              '/ingredients_view': (c) => ChangeNotifierProvider(
+              '/ingredients_view':
+                  (c) => ChangeNotifierProvider(
                     create: (_) => IngredientsViewModel(),
                     child: const IngredientsView(),
                   ),
