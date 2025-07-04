@@ -12,6 +12,7 @@ void main() async {
   // Garante perfil criado antes de rodar o app
   await UsuarioValidadorService().validarUsuarioLogadoComPerfil();
 
+
   runApp(const MyApp());
 }
 
@@ -51,6 +52,7 @@ class MyApp extends StatelessWidget {
                     create: (_) => IngredientsViewModel(),
                     child: const IngredientsView(),
                   ),
+                  
             },
           );
         },
