@@ -34,7 +34,6 @@ class _IngredientsViewState extends State<IngredientsView> {
         }
       });
 
-    // dispara o loading da primeira página
     WidgetsBinding.instance.addPostFrameCallback((_) => vm.init());
   }
 
@@ -55,7 +54,6 @@ class _IngredientsViewState extends State<IngredientsView> {
       ),
       body: Column(
         children: [
-          // campo de busca
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: TextField(
@@ -78,15 +76,12 @@ class _IngredientsViewState extends State<IngredientsView> {
             ),
           ),
 
-          // corpo da lista
           Expanded(
             child: Builder(builder: (_) {
-              // primeiro carregamento
               if (vm.isLoading && vm.displayed.isEmpty) {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              // erro
               if (vm.hasError && vm.displayed.isEmpty) {
                 return Center(
                   child: Text(
@@ -96,19 +91,16 @@ class _IngredientsViewState extends State<IngredientsView> {
                 );
               }
 
-              // sem resultados
               if (vm.displayed.isEmpty) {
                 return const Center(
                   child: Text('Nenhum ingrediente encontrado'),
                 );
               }
 
-              // lista com paginação infinita
               return ListView.separated(
                 controller: _scrollCtrl,
                 padding: const EdgeInsets.symmetric(vertical: 4),
-                itemCount:
-                    vm.displayed.length + (vm.hasMore ? 1 : 0),
+                itemCount: vm.displayed.length + (vm.hasMore ? 1 : 0),
                 separatorBuilder: (_, __) => const Divider(
                   height: 1,
                   thickness: 0.5,
@@ -117,11 +109,13 @@ class _IngredientsViewState extends State<IngredientsView> {
                 ),
                 itemBuilder: (_, index) {
                   if (index < vm.displayed.length) {
+                    final ing = vm.displayed[index];
                     return IngredientTile(
-                      ingredient: vm.displayed[index],
+                      key: ValueKey(ing.cosingRef),
+                      ingredient: ing,
                     );
                   }
-                  // spinner no fim da lista enquanto carrega mais
+
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 16),
                     child: Center(child: CircularProgressIndicator()),
@@ -132,8 +126,6 @@ class _IngredientsViewState extends State<IngredientsView> {
           ),
         ],
       ),
-
-      // botão flutuante de “Minha Lista”
       floatingActionButtonLocation:
           FloatingActionButtonLocation.centerFloat,
       floatingActionButton: vm.selected.isEmpty

@@ -10,13 +10,12 @@ import '../views/views.dart';
 class IngredientTile extends StatelessWidget {
   final IngredientModel ingredient;
 
-  const IngredientTile({
-    Key? key,
-    required this.ingredient,
-  }) : super(key: key);
+  const IngredientTile({Key? key, required this.ingredient}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('🔨 IngredientTile.build para ${ingredient.cosingRef}');
+
     final vm = context.watch<IngredientsViewModel>();
     final isSelected = vm.selected.contains(ingredient);
 
@@ -32,9 +31,7 @@ class IngredientTile extends StatelessWidget {
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (_) => IngredientDetailView(
-                ingredient: ingredient,
-              ),
+              builder: (_) => IngredientDetailView(ingredient: ingredient),
             ),
           );
         },
@@ -90,28 +87,32 @@ class IngredientTile extends StatelessWidget {
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
-                            children: ingredient.functions.map((func) {
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 4),
-                                child: Chip(
-                                  materialTapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                  visualDensity: const VisualDensity(
-                                      horizontal: -4, vertical: -4),
-                                  padding: EdgeInsets.zero,
-                                  labelPadding: const EdgeInsets.symmetric(
-                                    horizontal: 6,
-                                    vertical: 0,
-                                  ),
-                                  label: Text(
-                                    func,
-                                    style: const TextStyle(fontSize: 10),
-                                  ),
-                                  backgroundColor:
-                                      primaryColor.withOpacity(0.1),
-                                ),
-                              );
-                            }).toList(),
+                            children:
+                                ingredient.functions.map((func) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 4),
+                                    child: Chip(
+                                      materialTapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                      visualDensity: const VisualDensity(
+                                        horizontal: -4,
+                                        vertical: -4,
+                                      ),
+                                      padding: EdgeInsets.zero,
+                                      labelPadding: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 0,
+                                      ),
+                                      label: Text(
+                                        func,
+                                        style: const TextStyle(fontSize: 10),
+                                      ),
+                                      backgroundColor: primaryColor.withOpacity(
+                                        0.1,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
                           ),
                         ),
                       ),
@@ -121,12 +122,7 @@ class IngredientTile extends StatelessWidget {
 
               // Botão de marcar/desmarcar
               IconButton(
-                icon: Icon(
-                  isSelected
-                      ? Icons.close
-                      : Icons.add,
-                  size: 20,
-                ),
+                icon: Icon(isSelected ? Icons.close : Icons.add, size: 20),
                 color: primaryColor,
                 onPressed: () => vm.toggleSelected(ingredient),
                 splashRadius: 20,
