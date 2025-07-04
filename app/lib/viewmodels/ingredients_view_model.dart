@@ -1,70 +1,83 @@
-import 'dart:convert';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
+// lib/viewmodels/ingredients_view_model.dart
 
-import '../models/models.dart';
+import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/ingredient_model.dart';
+import '../services/firestore_service.dart';
 
 class IngredientsViewModel extends ChangeNotifier {
-  final List<IngredientModel> _all = [];
-  List<IngredientModel> displayed = [];
+  final FirestoreService _service = FirestoreService();
 
   static const int _pageSize = 20;
+
+  final List<IngredientModel> displayed = [];
+  DocumentSnapshot? _lastDoc;
+  bool hasMore = true;
+
   bool isLoading = false;
   bool hasError = false;
   String? errorMessage;
 
-  // 1) nova lista de selecionados
+  // busca atual (para pesquisa incremental)
+  String _currentFilter = '';
+
+  // selecionados
   final List<IngredientModel> selected = [];
 
+  /// Carrega a primeira página (sem filtro)
   Future<void> init() async {
+    _lastDoc = null;
+    _currentFilter = '';
+    hasMore = true;
+    displayed.clear();
+    await fetchNextPage();
+  }
+
+  /// Pesquisa (texto) — reseta tudo e carrega a página 1 com filtro
+  Future<void> search(String query) async {
+    _lastDoc = null;
+    _currentFilter = query.trim().toLowerCase();
+    hasMore = true;
+    displayed.clear();
+    await fetchNextPage();
+  }
+
+  /// Chama ao rolar para baixo
+  Future<void> fetchNextPage() async {
+    if (isLoading || !hasMore) return;
+
+    isLoading = true;
+    hasError = false;
+    notifyListeners();
+
     try {
-      isLoading = true;
-      hasError = false;
-      notifyListeners();
+      final page = await _service.fetchIngredientsPage(
+        startAfter: _lastDoc,
+        pageSize: _pageSize,
+        filter: _currentFilter,
+      );
 
-      final raw = await rootBundle.loadString('assets/data/cosing_dados_pt-br.json');
-      final data = json.decode(raw);
-      final listDynamic = (data is List)
-          ? data
-          : (data is Map)
-              ? data.values.toList()
-              : <dynamic>[];
+      // adiciona novos itens
+      displayed.addAll(page.items);
 
-      // popula _all
-      for (final e in listDynamic) {
-        _all.add(IngredientModel.fromJson(e as Map<String, dynamic>));
+      // prepara cursor para a próxima página
+      _lastDoc = page.lastDoc;
+
+      // se veio menos que o solicitado, acabou
+      if (page.items.length < _pageSize) {
+        hasMore = false;
       }
-      // exibe primeira página
-      displayed = _all.take(_pageSize).toList();
     } catch (e, st) {
       hasError = true;
       errorMessage = e.toString();
-      debugPrint('❌ erro ao init ingredients: $e\n$st');
+      debugPrint('❌ erro ao carregar página de ingredientes: $e\n$st');
     } finally {
       isLoading = false;
       notifyListeners();
     }
   }
 
-  void loadMore() {
-    if (isLoading || displayed.length >= _all.length) return;
-    final nextMax = displayed.length + _pageSize;
-    displayed = _all.take(nextMax).toList();
-    notifyListeners();
-  }
-
-  void search(String query) {
-    final q = query.toLowerCase().trim();
-    final filtered = _all.where((ing) {
-      return ing.inciName.toLowerCase().contains(q) ||
-          ing.description.toLowerCase().contains(q);
-    }).toList();
-
-    displayed = filtered.take(_pageSize).toList();
-    notifyListeners();
-  }
-
-  // 2) método para (des)marcar selecionado
+  /// (des)marcar selecionado
   void toggleSelected(IngredientModel ing) {
     if (selected.contains(ing)) {
       selected.remove(ing);
@@ -74,17 +87,17 @@ class IngredientsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 3) opcional: limpar todos os selecionados
+  /// limpa todos os selecionados
   void clearSelected() {
     selected.clear();
     notifyListeners();
   }
 
-  // 4) novo: reordena a lista de selecionados
-  /// Move o item de [oldIndex] para [newIndex] na lista `selected`.
+  /// reordena a lista de selecionados
   void reorderSelected(int oldIndex, int newIndex) {
-    // o ReorderableListView passa newIndex já incrementado se arrastado pra frente
-    if (newIndex > oldIndex) newIndex -= 1;
+    if (newIndex > oldIndex) {
+      newIndex -= 1;
+    }
     final item = selected.removeAt(oldIndex);
     selected.insert(newIndex, item);
     notifyListeners();
