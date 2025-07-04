@@ -1,32 +1,40 @@
+// lib/views/ingredients_view.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../viewmodels/viewmodels.dart';
-import '../widgets/widgets.dart';
-import '../views/views.dart';
+import '../viewmodels/ingredients_view_model.dart';
+import '../widgets/ingredient_tile.dart';
+import '../widgets/app_bar_config.dart';
+import '../views/selected_ingredients_view.dart';
 
 class IngredientsView extends StatefulWidget {
-  const IngredientsView({super.key});
+  const IngredientsView({Key? key}) : super(key: key);
 
   @override
   State<IngredientsView> createState() => _IngredientsViewState();
 }
 
 class _IngredientsViewState extends State<IngredientsView> {
-  late final IngredientsViewModel vm;
   late final ScrollController _scrollCtrl;
+  late final IngredientsViewModel vm;
 
   @override
   void initState() {
     super.initState();
     vm = context.read<IngredientsViewModel>();
-    _scrollCtrl =
-        ScrollController()..addListener(() {
-          if (_scrollCtrl.position.pixels >=
-              _scrollCtrl.position.maxScrollExtent - 100) {
-            vm.loadMore();
-          }
-        });
+
+    _scrollCtrl = ScrollController()
+      ..addListener(() {
+        final pos = _scrollCtrl.position;
+        if (pos.pixels >= pos.maxScrollExtent - 100 &&
+            !vm.isLoading &&
+            vm.hasMore) {
+          vm.fetchNextPage();
+        }
+      });
+
+    // dispara o loading da primeira página
     WidgetsBinding.instance.addPostFrameCallback((_) => vm.init());
   }
 
@@ -41,14 +49,20 @@ class _IngredientsViewState extends State<IngredientsView> {
     final vm = context.watch<IngredientsViewModel>();
 
     return Scaffold(
-      appBar: const AppBarConfig(title: 'Ingredientes', showBackButton: true),
+      appBar: const AppBarConfig(
+        title: 'Ingredientes',
+        showBackButton: true,
+      ),
       body: Column(
         children: [
-          // Search
+          // campo de busca
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: TextField(
-              onChanged: vm.search,
+              onChanged: (text) {
+                vm.search(text);
+                _scrollCtrl.jumpTo(0);
+              },
               decoration: InputDecoration(
                 hintText: 'Buscar…',
                 prefixIcon: const Icon(Icons.search),
@@ -58,104 +72,112 @@ class _IngredientsViewState extends State<IngredientsView> {
                   borderSide: BorderSide.none,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 0,
-                ),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
               ),
             ),
           ),
 
-          // Lista
+          // corpo da lista
           Expanded(
-            child: Builder(
-              builder: (_) {
-                if (vm.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (vm.hasError) {
-                  return Center(
-                    child: Text(
-                      'Erro: ${vm.errorMessage}',
-                      textAlign: TextAlign.center,
-                    ),
-                  );
-                }
-                if (vm.displayed.isEmpty) {
-                  return const Center(
-                    child: Text('Nenhum ingrediente encontrado'),
-                  );
-                }
+            child: Builder(builder: (_) {
+              // primeiro carregamento
+              if (vm.isLoading && vm.displayed.isEmpty) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-                return ListView.separated(
-                  controller: _scrollCtrl,
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  itemCount: vm.displayed.length,
-                  separatorBuilder:
-                      (_, __) => const Divider(
-                        height: 1,
-                        thickness: 0.5,
-                        indent: 16,
-                        endIndent: 16,
-                      ),
-                  itemBuilder: (_, i) {
-                    return IngredientTile(ingredient: vm.displayed[i]);
-                  },
+              // erro
+              if (vm.hasError && vm.displayed.isEmpty) {
+                return Center(
+                  child: Text(
+                    'Erro: ${vm.errorMessage}',
+                    textAlign: TextAlign.center,
+                  ),
                 );
-              },
-            ),
+              }
+
+              // sem resultados
+              if (vm.displayed.isEmpty) {
+                return const Center(
+                  child: Text('Nenhum ingrediente encontrado'),
+                );
+              }
+
+              // lista com paginação infinita
+              return ListView.separated(
+                controller: _scrollCtrl,
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                itemCount:
+                    vm.displayed.length + (vm.hasMore ? 1 : 0),
+                separatorBuilder: (_, __) => const Divider(
+                  height: 1,
+                  thickness: 0.5,
+                  indent: 16,
+                  endIndent: 16,
+                ),
+                itemBuilder: (_, index) {
+                  if (index < vm.displayed.length) {
+                    return IngredientTile(
+                      ingredient: vm.displayed[index],
+                    );
+                  }
+                  // spinner no fim da lista enquanto carrega mais
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                },
+              );
+            }),
           ),
         ],
       ),
 
-      // Barra de progresso no final da lista
-      // dentro do Scaffold em IngredientsView
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton:
-          vm.selected.isEmpty
-              ? null
-              : FloatingActionButton.extended(
-                icon: const Icon(Icons.list),
-                label: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('Minha Lista'),
-                    const SizedBox(width: 8),
-                    Container(
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.primary.withOpacity(0.8),
-                        shape: BoxShape.circle,
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        '${vm.selected.length}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
+      // botão flutuante de “Minha Lista”
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: vm.selected.isEmpty
+          ? null
+          : FloatingActionButton.extended(
+              icon: const Icon(Icons.list),
+              label: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Minha Lista'),
+                  const SizedBox(width: 8),
+                  Container(
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.8),
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '${vm.selected.length}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ],
-                ),
-                onPressed: () {
-                  final vmInstance = context.read<IngredientsViewModel>();
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (ctx) {
-                        return ChangeNotifierProvider.value(
-                          value: vmInstance,
-                          child: const SelectedIngredientsView(),
-                        );
-                      },
-                    ),
-                  );
-                },
+                  ),
+                ],
               ),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => ChangeNotifierProvider.value(
+                      value: vm,
+                      child: const SelectedIngredientsView(),
+                    ),
+                  ),
+                );
+              },
+            ),
     );
   }
 }
