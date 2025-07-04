@@ -1,17 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/widgets.dart';
 
-class AnalysisResultView extends StatefulWidget {
+class AnalysisResultView extends StatelessWidget {
   const AnalysisResultView({Key? key}) : super(key: key);
-
-  @override
-  State<AnalysisResultView> createState() => _AnalysisResultViewState();
-}
-
-class _AnalysisResultViewState extends State<AnalysisResultView> {
-  bool isUploading = false;
-  double progress = 0;
-
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +11,10 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
         title: 'Resultado da Análise',
         showBackButton: true,
       ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          
+      body: const Center(
+        child: Text(
+          'Tela de resultados (ainda em desenvolvimento)',
+          textAlign: TextAlign.center,
         ),
       ),
     );
