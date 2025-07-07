@@ -1,0 +1,327 @@
+[
+  {
+    "funcao_ingles": "ABRASIVE",
+    "funcao_portugues": "ABRASIVOS",
+    "definicao": "Substâncias adicionadas aos produtos cosméticos com o objetivo de remover matérias de diversas superfícies corporais, como auxiliares da limpeza dental mecânica ou com vista a aumentar o lustro."
+  },
+  {
+    "funcao_ingles": "ABSORBENT",
+    "funcao_portugues": "ABSORVENTE",
+    "definicao": "Substâncias adicionadas aos produtos cosméticos como meio de dispersão de substâncias dissolvidas em água ou em gorduras ou finamente divididas."
+  },
+  {
+    "funcao_ingles": "ANTICAKING",
+    "funcao_portugues": "ANTIFERMENTANTE",
+    "definicao": "Permite o fluxo livre de partículas sólidas e, assim, evita a aglomeração de produtos cosméticos em pó em nódulos ou massas duras."
+  },
+  {
+    "funcao_ingles": "ANTICORROSIVE",
+    "funcao_portugues": "ANTICORROSIVO",
+    "definicao": "Impede a corrosão da embalagem."
+  },
+  {
+    "funcao_ingles": "ANTIDANDRUFF",
+    "funcao_portugues": "ANTICASPA",
+    "definicao": "Ajuda a controlar a caspa."
+  },
+  {
+    "funcao_ingles": "ANTIFOAMING",
+    "funcao_portugues": "ANTIESPUMANTE",
+    "definicao": "Suprime espuma durante a fabricação ou reduz a tendência de produtos acabados para gerar espuma."
+  },
+  {
+    "funcao_ingles": "ANTIMICROBIAL",
+    "funcao_portugues": "ANTIMICROBIANO",
+    "definicao": "Ajuda a controlar o crescimento de microrganismos sobre a pele."
+  },
+  {
+    "funcao_ingles": "ANTIOXIDANT",
+    "funcao_portugues": "ANTIOXIDANTE",
+    "definicao": "Inibe reacções promovidas pelo oxigénio, evitando a oxidação e rancificação."
+  },
+  {
+    "funcao_ingles": "ANTIPERSPIRANT",
+    "funcao_portugues": "ANTIPERSPIRANTE",
+    "definicao": "Reduz a transpiração."
+  },
+  {
+    "funcao_ingles": "ANTIPLAQUE",
+    "funcao_portugues": "ANTIPLACA",
+    "definicao": "Ajuda a proteger contra a placa."
+  },
+  {
+    "funcao_ingles": "ANTISEBORRHOEIC",
+    "funcao_portugues": "ANTISEBORREICO",
+    "definicao": "Ajuda a controlar a produção de sebo."
+  },
+  {
+    "funcao_ingles": "ANTISTATIC",
+    "funcao_portugues": "ANTISETÁTICO",
+    "definicao": "Reduz a eletricidade estática por carga elétrica de neutralização sobre uma superfície."
+  },
+  {
+    "funcao_ingles": "ASTRINGENT",
+    "funcao_portugues": "ADSTRINGENTE",
+    "definicao": "Contrai a pele."
+  },
+  {
+    "funcao_ingles": "BINDING",
+    "funcao_portugues": "LIGANTE",
+    "definicao": "Fornece coesão em cosméticos."
+  },
+  {
+    "funcao_ingles": "BLEACHING",
+    "funcao_portugues": "BRANQUEADOR",
+    "definicao": "Clareia a sombra de cabelo ou da pele."
+  },
+  {
+    "funcao_ingles": "BUFFERING",
+    "funcao_portugues": "AGENTE TAMPÃO",
+    "definicao": "Estabiliza o pH dos produtos cosméticos."
+  },
+  {
+    "funcao_ingles": "BULKING",
+    "funcao_portugues": "AGENTE DE VOLUME",
+    "definicao": "Reduz a densidade a granel de produtos cosméticos."
+  },
+  {
+    "funcao_ingles": "CHELATING",
+    "funcao_portugues": "QUELANTE",
+    "definicao": "Substâncias adicionadas aos produtos cosméticos com o objetivo de formar complexos com íons metálicos susceptíveis de afetar a estabilidade e/ou o aspecto dos cosméticos."
+  },
+  {
+    "funcao_ingles": "CLEANSING",
+    "funcao_portugues": "LIMPADORES",
+    "definicao": "Ajuda a manter a superfície do corpo limpa."
+  },
+  {
+    "funcao_ingles": "COSMETIC COLORANT",
+    "funcao_portugues": "CORANTES COSMÉTICOS",
+    "definicao": "Substâncias adicionadas aos produtos cosméticos com o objetivo de lhes conferir uma coloração e/ou induzir a coloração da pele e/ou das respectivas excrescências. Todos os corantes enumerados são substâncias da lista positiva de corantes (anexo IV da Diretiva dos produtos cosméticos)."
+  },
+  {
+    "funcao_ingles": "DENATURANT",
+    "funcao_portugues": "DESNATURANTES",
+    "definicao": "Substâncias adicionadas, de um modo geral, a produtos cosméticos que contenham álcool etílico, de modo a torná-los impróprios para beber."
+  },
+  {
+    "funcao_ingles": "DEODORANT",
+    "funcao_portugues": "DESODORIZANTE",
+    "definicao": "Substâncias adicionadas aos produtos cosméticos com o objetivo de reduzir ou ocultar odores corporais desagradáveis."
+  },
+  {
+    "funcao_ingles": "DEPILATORY",
+    "funcao_portugues": "DEPILATÓRIO",
+    "definicao": "Remove pêlos indesejáveis."
+  },
+  {
+    "funcao_ingles": "DETANGLING",
+    "funcao_portugues": "DESEMBARAÇANTE",
+    "definicao": "Reduz ou elimina entrelaçamento cabelo devido a alteração dos cabelos ou danos de superfície e, assim, ajuda a pentear."
+  },
+  {
+    "funcao_ingles": "EMOLLIENT",
+    "funcao_portugues": "EMOLIENTE",
+    "definicao": "Amacia e suaviza a pele."
+  },
+  {
+    "funcao_ingles": "EMULSIFYING",
+    "funcao_portugues": "EMULSIONANTE",
+    "definicao": "Promove a formação de misturas íntimas de líquidos não miscíveis, alterando a tensão interfacial."
+  },
+  {
+    "funcao_ingles": "EMULSION STABILISING",
+    "funcao_portugues": "ESTABILIZADOR DE EMULSÃO",
+    "definicao": "Ajuda o processo de emulsificação e melhora a estabilidade da emulsão e prazo de validade."
+  },
+  {
+    "funcao_ingles": "FILM FORMING",
+    "funcao_portugues": "FORMADOR DE FILME",
+    "definicao": "Produz, mediante requerimento, um filme contínuo sobre a pele, cabelo e unhas."
+  },
+  {
+    "funcao_ingles": "FLAVOURING",
+    "funcao_portugues": "AROMATIZANTES",
+    "definicao": "Dá sabor ao produto cosmético."
+  },
+  {
+    "funcao_ingles": "FOAM BOOSTING",
+    "funcao_portugues": "IMPULSIONADOR DE ESPUMA",
+    "definicao": "Melhora a qualidade da espuma produzida por um sistema através do aumento de um ou mais das propriedades seguintes: Textura volume, e / ou estabilidade."
+  },
+  {
+    "funcao_ingles": "FOAMING",
+    "funcao_portugues": "ESPUMANTE",
+    "definicao": "Pequenas bolhas de ar ou outro gás no interior de um pequeno volume de líquido, modificando a tensão superficial do líquido."
+  },
+  {
+    "funcao_ingles": "GEL FORMING",
+    "funcao_portugues": "GELIFICANTES",
+    "definicao": "Dá a consistência de um gel (uma preparação semi-sólido com um pouco de elasticidade) para uma preparação líquida."
+  },
+  {
+    "funcao_ingles": "HAIR CONDITIONING",
+    "funcao_portugues": "CONDICIONANTE DE CABELO",
+    "definicao": "Deixa o cabelo mais fácil de pentear, flexível, macia e brilhante e / ou confere volume, leveza, brilho, etc."
+  },
+  {
+    "funcao_ingles": "HAIR DYEING",
+    "funcao_portugues": "COLORANTE DE CABELOS",
+    "definicao": "Substâncias adicionadas aos produtos cosméticos com vista à coloração do cabelo."
+  },
+  {
+    "funcao_ingles": "HAIR FIXING",
+    "funcao_portugues": "FIXADOR DE CABELO",
+    "definicao": "Permite o controle físico do estilo de cabelo."
+  },
+  {
+    "funcao_ingles": "HAIR WAVING OR STRAIGHTENING",
+    "funcao_portugues": "ONDULADOR OU ALISADOR DE CABELO",
+    "definicao": "Modifica a estrutura química do cabelo, permitindo-lhe ser ajustado no estilo requerido."
+  },
+  {
+    "funcao_ingles": "HUMECTANT",
+    "funcao_portugues": "UMECTANTE",
+    "definicao": "Mantém e retém a umidade."
+  },
+  {
+    "funcao_ingles": "HYDROTROPE",
+    "funcao_portugues": "HIDROTÓPICO",
+    "definicao": "Aumenta a solubilidade da substância que é apenas ligeiramente solúvel em água."
+  },
+  {
+    "funcao_ingles": "KERATOLYTIC",
+    "funcao_portugues": "QUERATOLÍTICO",
+    "definicao": "Ajuda a eliminar as células mortas do estrato córneo."
+  },
+  {
+    "funcao_ingles": "MASKING",
+    "funcao_portugues": "MASCARANTE",
+    "definicao": "Reduz ou inibe o odor ou o sabor de base do produto."
+  },
+  {
+    "funcao_ingles": "MOISTURISING",
+    "funcao_portugues": "HIDRATANTE",
+    "definicao": "Aumenta o teor de água da pele e ajuda a mantê-la macia e suave."
+  },
+  {
+    "funcao_ingles": "NAIL CONDITIONING",
+    "funcao_portugues": "CONDICIONADOR DE UNHAS",
+    "definicao": "Melhora as características estéticas da unha."
+  },
+  {
+    "funcao_ingles": "OPACIFYING",
+    "funcao_portugues": "OPACIFICANTES",
+    "definicao": "Reduz a transparência ou translucidez dos cosméticos."
+  },
+  {
+    "funcao_ingles": "ORAL CARE",
+    "funcao_portugues": "CUIDADO ORAL",
+    "definicao": "Fornece efeitos cosméticos para a cavidade oral, por exemplo, limpeza, desodorização, protegendo."
+  },
+  {
+    "funcao_ingles": "OXIDISING",
+    "funcao_portugues": "OXIDANTES",
+    "definicao": "Altera a natureza química da substância pela adição de um outro átomo de oxigénio ou a remoção de hidrogénio."
+  },
+  {
+    "funcao_ingles": "PEARLESCENT",
+    "funcao_portugues": "PEARLECENTE",
+    "definicao": "Dá uma aparência mascarada a cosméticos."
+  },
+  {
+    "funcao_ingles": "PERFUMING",
+    "funcao_portugues": "PERFUMES",
+    "definicao": "Usada para perfumes e matérias-primas aromáticas (secção II)."
+  },
+  {
+    "funcao_ingles": "PLASTICISER",
+    "funcao_portugues": "PLASTIFICANTE",
+    "definicao": "Suaviza e faz outra substância flexível que de outra forma não poderia ser facilmente deformada, espalhar ou trabalhados."
+  },
+  {
+    "funcao_ingles": "PRESERVATIVE",
+    "funcao_portugues": "CONSERVANTE",
+    "definicao": "Inibe primariamente o desenvolvimento de microrganismos em cosméticos. Todos os conservantes listados são substâncias na lista positiva de conservantes (anexo VI da Directiva Cosméticos)."
+  },
+  {
+    "funcao_ingles": "PROPELLANT",
+    "funcao_portugues": "PROPULSOR/PROPELENTE",
+    "definicao": "Gera pressão numa embalagem de aerossol, expelindo o conteúdo quando a válvula é aberta. Alguns gases propulsores liquefeitos podem actuar como solventes."
+  },
+  {
+    "funcao_ingles": "REDUCING",
+    "funcao_portugues": "REDUTOR",
+    "definicao": "Altera a natureza química da substância pela adição de um outro átomo de hidrogénio ou remoção de oxigénio."
+  },
+  {
+    "funcao_ingles": "REFATTING",
+    "funcao_portugues": "SOBREENGORDURANTE",
+    "definicao": "Reabastece os lípidos do cabelo ou das camadas superiores da pele."
+  },
+  {
+    "funcao_ingles": "REFRESHING",
+    "funcao_portugues": "REFRESCANTE",
+    "definicao": "Confere uma frescura agradável para a pele."
+  },
+  {
+    "funcao_ingles": "SKIN CONDITIONING",
+    "funcao_portugues": "CONDICIONADOR DA PELE",
+    "definicao": "Mantém a pele em boas condições."
+  },
+  {
+    "funcao_ingles": "SKIN PROTECTING",
+    "funcao_portugues": "PROTETOR DA PELE",
+    "definicao": "Ajuda a evitar efeitos prejudiciais para a pele de fatores externos."
+  },
+  {
+    "funcao_ingles": "SMOOTHING",
+    "funcao_portugues": "SUAVIZANTE",
+    "definicao": "Procura alcançar uma superfície uniforme da pele, diminuindo a rugosidade ou irregularidades."
+  },
+  {
+    "funcao_ingles": "SOLVENT",
+    "funcao_portugues": "SOLVENTE",
+    "definicao": "Dissolve outras substâncias."
+  },
+  {
+    "funcao_ingles": "SOOTHING",
+    "funcao_portugues": "CALMANTE",
+    "definicao": "Ajuda a aliviar o desconforto da pele ou do couro cabeludo."
+  },
+  {
+    "funcao_ingles": "STABILISING",
+    "funcao_portugues": "ESTABILIZANTE",
+    "definicao": "Melhora ingredientes ou a estabilidade da formulação e prazo de validade."
+  },
+  {
+    "funcao_ingles": "SURFACTANT",
+    "funcao_portugues": "SURFACTANTE/TENSOATIVO",
+    "definicao": "Diminui a tensão superficial da cosmética, bem como auxiliares de distribuição uniforme do produto, quando usado."
+  },
+  {
+    "funcao_ingles": "TANNING",
+    "funcao_portugues": "BRONZEADOR",
+    "definicao": "Escurece a pele, com ou sem exposição aos UV."
+  },
+  {
+    "funcao_ingles": "TONIC",
+    "funcao_portugues": "TÔNICO",
+    "definicao": "Produz uma sensação de bem-estar na pele e cabelo."
+  },
+  {
+    "funcao_ingles": "UV ABSORBER",
+    "funcao_portugues": "ABSORVEDOR DE RAIOS UV",
+    "definicao": "Protege o produto cosmético dos efeitos da luz UV."
+  },
+  {
+    "funcao_ingles": "UV FILTER",
+    "funcao_portugues": "FILTRO UV",
+    "definicao": "Filtra certos raios UV, a fim de proteger a pele ou os cabelos contra os efeitos nocivos destas radiações. Todos os filtros UV listados são substâncias na lista positiva de filtros de UV (anexo VII da Directiva Cosméticos)."
+  },
+  {
+    "funcao_ingles": "VISCOSITY CONTROLLING",
+    "funcao_portugues": "REGULADOR DE VISCOSIDADE",
+    "definicao": "Aumenta ou diminui a viscosidade dos cosméticos."
+  }
+]

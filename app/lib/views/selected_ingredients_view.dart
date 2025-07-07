@@ -1,9 +1,10 @@
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../viewmodels/viewmodels.dart';
 import '../widgets/widgets.dart';
-import '../views/views.dart';          
+import '../views/views.dart';
 
 class SelectedIngredientsView extends StatelessWidget {
   const SelectedIngredientsView({Key? key}) : super(key: key);
@@ -26,27 +27,31 @@ class SelectedIngredientsView extends StatelessWidget {
               buildDefaultDragHandles: false,
               itemBuilder: (context, index) {
                 final ing = vm.selected[index];
-                return ListTile(
+                return IngredientTile(
                   key: ValueKey(ing.cosingRef),
-                  title: Text(ing.inciName),
-                  subtitle: Text(ing.description),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ReorderableDragStartListener(
-                        index: index,
-                        child: const Icon(Icons.drag_handle),
-                      ),
-                      const SizedBox(width: 8),
-                      IconButton(
-                        icon: const Icon(
-                          Icons.delete_outline,
-                          color: Colors.red,
-                        ),
-                        onPressed: () => vm.toggleSelected(ing),
-                      ),
-                    ],
+                  ingredient: ing,
+                  // handle de drag
+                  leading: ReorderableDragStartListener(
+                    index: index,
+                    child: const Icon(Icons.drag_handle),
                   ),
+                  // botão de remoção
+                  trailing: IconButton(
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      color: Colors.red,
+                    ),
+                    onPressed: () => vm.toggleSelected(ing),
+                  ),
+                  // mantém comportamento padrão de abrir detalhes
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            IngredientDetailView(ingredient: ing),
+                      ),
+                    );
+                  },
                 );
               },
             ),
@@ -56,7 +61,7 @@ class SelectedIngredientsView extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: ElevatedButton.icon(
                 icon: const Icon(Icons.analytics),
-                label: const Text('Analisar'),      // já renomeado
+                label: const Text('Analisar'),
                 onPressed: () => _showAnalysisDialog(context),
               ),
             ),
@@ -71,8 +76,7 @@ class SelectedIngredientsView extends StatelessWidget {
         content: const Text(
           'A ordem dos ingredientes é importante para uma análise precisa. '
           'Os ingredientes aparecem no rótulo de acordo com a sua concentração '
-          'no produto. Tenha certeza que os produtos estão na mesma ordem em que '
-          'aparecem no rótulo.',
+          'no produto. Tenha certeza de que estão na mesma ordem do rótulo.',
         ),
         actions: [
           TextButton(
