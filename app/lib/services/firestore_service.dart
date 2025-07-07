@@ -53,35 +53,33 @@ class FirestoreService {
     int pageSize = 20,
     String filter = '',
   }) async {
-    // Monta a query tipada
+    // 1) Ordena por inciName para busca e paginação
     Query<Map<String, dynamic>> query = _db
         .collection('ingredients')
         .orderBy('inciName')
         .limit(pageSize);
 
+    // 2) Se tiver filtro, aplica início/fim de prefixo
     if (filter.isNotEmpty) {
       final term = filter.toLowerCase().trim();
-      query = query.startAt([term]).endAt(['$term\uf8ff']);
+      query = query
+          .startAt([term])
+          .endAt(['$term\uf8ff']);
     }
 
+    // 3) Se não for a primeira página, pula após o último doc
     if (startAfter != null) {
       query = query.startAfterDocument(startAfter);
     }
 
-    // Executa a query
+    // 4) Executa e converte
     final snap = await query.get();
-
-    // LOG #1: imprime todos os IDs que o Firestore devolveu
     debugPrint(
       '🆔 snap.docs IDs: [${snap.docs.map((d) => d.id).join(', ')}]',
     );
 
-    // Converte cada doc usando o factory que garante cosingRef = doc.id
     final items = snap.docs.map((doc) {
-      // LOG #2: payload bruto
-      debugPrint(
-        '   • raw doc.id=${doc.id}, data keys=${doc.data().keys.toList()}',
-      );
+      debugPrint('   • raw doc.id=${doc.id}');
       return IngredientModel.fromFirestore(doc);
     }).toList();
 
