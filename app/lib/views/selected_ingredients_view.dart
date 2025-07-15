@@ -2,12 +2,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../viewmodels/viewmodels.dart';
-import '../widgets/widgets.dart';
-import '../views/views.dart';
+import '../viewmodels/ingredients_view_model.dart';
+import '../widgets/app_bar_config.dart';
+import '../widgets/ingredient_tile.dart';
+import 'analysis_result_view.dart';
+import 'ingredient_detail_view.dart';
 
 class SelectedIngredientsView extends StatelessWidget {
-  const SelectedIngredientsView({Key? key}) : super(key: key);
+  /// Se false, esconde o botão de Analisar e o ícone de exclusão
+  final bool showAnalyzeButton;
+
+  const SelectedIngredientsView({
+    Key? key,
+    this.showAnalyzeButton = true,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,20 +38,19 @@ class SelectedIngredientsView extends StatelessWidget {
                 return IngredientTile(
                   key: ValueKey(ing.cosingRef),
                   ingredient: ing,
-                  // handle de drag
                   leading: ReorderableDragStartListener(
                     index: index,
                     child: const Icon(Icons.drag_handle),
                   ),
-                  // botão de remoção
-                  trailing: IconButton(
-                    icon: const Icon(
-                      Icons.delete_outline,
-                      color: Colors.red,
-                    ),
-                    onPressed: () => vm.toggleSelected(ing),
-                  ),
-                  // mantém comportamento padrão de abrir detalhes
+                  trailing: showAnalyzeButton
+                      ? IconButton(
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: Colors.red,
+                          ),
+                          onPressed: () => vm.toggleSelected(ing),
+                        )
+                      : null,
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
@@ -55,7 +62,7 @@ class SelectedIngredientsView extends StatelessWidget {
                 );
               },
             ),
-      bottomNavigationBar: vm.selected.isEmpty
+      bottomNavigationBar: (vm.selected.isEmpty || !showAnalyzeButton)
           ? null
           : Padding(
               padding: const EdgeInsets.all(16),
