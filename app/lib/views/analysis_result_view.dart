@@ -8,7 +8,7 @@ import '../viewmodels/viewmodels.dart';
 import '../widgets/widgets.dart';
 import '../views/views.dart';
 
-class AnalysisResultView extends StatelessWidget {
+class AnalysisResultView extends StatefulWidget {
   final Product? product;
   final String title;
 
@@ -19,29 +19,47 @@ class AnalysisResultView extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<AnalysisResultView> createState() => _AnalysisResultViewState();
+}
+
+class _AnalysisResultViewState extends State<AnalysisResultView> {
+  @override
+  void initState() {
+    super.initState();
+    // Não fazemos mais clearSelected() aqui
+  }
+
+  @override
+  void dispose() {
+    // Limpa a lista de selected apenas ao sair do fluxo de produto
+    if (widget.product != null) {
+      context.read<IngredientsViewModel>().clearSelected();
+      // Se tiver análise no ProductsViewModel:
+      // context.read<ProductsViewModel>().clearAnalysis();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final ingVM = context.watch<IngredientsViewModel>();
     final prodVM = context.watch<ProductsViewModel>();
     final primary = Theme.of(context).colorScheme.primary;
 
-    final result = product != null
-        ? prodVM.analysisResult(product!)
+    final result = widget.product != null
+        ? prodVM.analysisResult(widget.product!)
         : ingVM.analyze();
 
-    // Reduzimos topOffset de 280 para 240
     const double topOffset = 240;
-
-    // Reduzimos bottomPadding de 96 para 80
     const double bottomPadding = 80;
 
     return Scaffold(
       appBar: AppBarConfig(
-        title: product != null ? 'Detalhes do Produto' : title,
+        title: widget.product != null ? 'Detalhes do Produto' : widget.title,
         showBackButton: true,
       ),
       body: Stack(
         children: [
-          // fundo gradient
           Positioned(
             top: topOffset,
             left: 0,
@@ -68,16 +86,18 @@ class AnalysisResultView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Título e funções ficam fixos até topOffset
                 SizedBox(height: topOffset),
+
                 Text(
-                  product?.name ?? 'Minha Análise Personalizada',
+                  widget.product?.name ?? 'Minha Análise Personalizada',
                   style: Theme.of(context)
                       .textTheme
                       .headlineSmall
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
+
                 const SizedBox(height: 16),
+
                 Text(
                   'Principais Funções',
                   style: Theme.of(context)
@@ -85,7 +105,9 @@ class AnalysisResultView extends StatelessWidget {
                       .titleMedium
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
+
                 const SizedBox(height: 8),
+
                 if (result.topFunctions.isEmpty)
                   const Text(
                     'Nenhuma função relevante encontrada.',
@@ -110,8 +132,7 @@ class AnalysisResultView extends StatelessWidget {
                               content: Text(def),
                               actions: [
                                 TextButton(
-                                  onPressed: () =>
-                                      Navigator.of(context).pop(),
+                                  onPressed: () => Navigator.of(context).pop(),
                                   child: const Text('Fechar'),
                                 ),
                               ],
@@ -145,11 +166,11 @@ class AnalysisResultView extends StatelessWidget {
                       ),
                     );
                   }),
+
                 const SizedBox(height: 24),
 
-                // Header de ingredientes
                 Text(
-                  product != null
+                  widget.product != null
                       ? 'Ingredientes do Produto'
                       : 'Princípios Ativos',
                   style: Theme.of(context)
@@ -157,9 +178,9 @@ class AnalysisResultView extends StatelessWidget {
                       .titleMedium
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
+
                 const SizedBox(height: 8),
 
-                // Só esta parte é rolável
                 Expanded(
                   child: SingleChildScrollView(
                     child: Wrap(
@@ -203,7 +224,7 @@ class AnalysisResultView extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (_) => SelectedIngredientsView(product: product),
+                builder: (_) => SelectedIngredientsView(product: widget.product),
               ),
             );
           },

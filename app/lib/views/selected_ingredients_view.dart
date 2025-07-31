@@ -1,3 +1,5 @@
+// lib/views/selected_ingredients_view.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,13 +11,9 @@ import 'analysis_result_view.dart';
 import 'ingredient_detail_view.dart';
 
 class SelectedIngredientsView extends StatefulWidget {
-  /// Produto que vai pré-selecionar ingredientes
   final Product? product;
 
-  const SelectedIngredientsView({
-    Key? key,
-    this.product,
-  }) : super(key: key);
+  const SelectedIngredientsView({Key? key, this.product}) : super(key: key);
 
   @override
   State<SelectedIngredientsView> createState() =>
@@ -23,30 +21,39 @@ class SelectedIngredientsView extends StatefulWidget {
 }
 
 class _SelectedIngredientsViewState extends State<SelectedIngredientsView> {
-  late final IngredientsViewModel vm;
-  bool _populated = false;
-
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_populated && widget.product != null) {
-      vm = context.read<IngredientsViewModel>();
-      vm.clearSelected();
-      for (final name in widget.product!.ingredients) {
-        for (final ing in vm.allIngredients) {
-          if (ing.inciName.toLowerCase() == name.toLowerCase()) {
-            vm.toggleSelected(ing);
-            break;
+  void initState() {
+    super.initState();
+
+    // Se vier de um produto, pré-seleciona os ingredientes
+    if (widget.product != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final vm = context.read<IngredientsViewModel>();
+        for (final inci in widget.product!.ingredients) {
+          for (final ing in vm.allIngredients) {
+            if (ing.inciName.toLowerCase() == inci.toLowerCase()) {
+              vm.toggleSelected(ing);
+              break;
+            }
           }
         }
-      }
-      _populated = true;
+      });
     }
   }
 
   @override
+  void dispose() {
+    // Ao sair da tela de produtos (fluxo product != null), limpa o selected
+    if (widget.product != null) {
+      context.read<IngredientsViewModel>().clearSelected();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final selected = context.watch<IngredientsViewModel>().selected;
+    final vm = context.watch<IngredientsViewModel>();
+    final selected = vm.selected;
     final fromProduct = widget.product != null;
 
     return Scaffold(
@@ -59,18 +66,19 @@ class _SelectedIngredientsViewState extends State<SelectedIngredientsView> {
           : ReorderableListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 8),
               itemCount: selected.length,
-              onReorder: context.read<IngredientsViewModel>().reorderSelected,
+              onReorder: vm.reorderSelected,
               buildDefaultDragHandles: false,
-              itemBuilder: (context, index) {
-                final ing = selected[index];
+              itemBuilder: (ctx, i) {
+                final ing = selected[i];
                 return IngredientTile(
                   key: ValueKey(ing.cosingRef),
                   ingredient: ing,
-                  leading: ReorderableDragStartListener(
-                    index: index,
-                    child: const Icon(Icons.drag_handle),
-                  ),
-                  // oculta remover quando for fluxo de produto
+                  leading: fromProduct
+                      ? null
+                      : ReorderableDragStartListener(
+                          index: i,
+                          child: const Icon(Icons.drag_handle),
+                        ),
                   trailing: fromProduct
                       ? null
                       : IconButton(
@@ -78,8 +86,7 @@ class _SelectedIngredientsViewState extends State<SelectedIngredientsView> {
                             Icons.delete_outline,
                             color: Colors.red,
                           ),
-                          onPressed: () =>
-                              context.read<IngredientsViewModel>().toggleSelected(ing),
+                          onPressed: () => vm.toggleSelected(ing),
                         ),
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
@@ -89,7 +96,6 @@ class _SelectedIngredientsViewState extends State<SelectedIngredientsView> {
                 );
               },
             ),
-      // só mostra botão “Analisar” no fluxo manual
       bottomNavigationBar: (!fromProduct && selected.isNotEmpty)
           ? Padding(
               padding: const EdgeInsets.all(16),
@@ -102,9 +108,9 @@ class _SelectedIngredientsViewState extends State<SelectedIngredientsView> {
                     builder: (ctx) => AlertDialog(
                       title: const Text('Atenção!'),
                       content: const Text(
-                        'A ordem dos ingredientes é importante para uma análise precisa. '
-                        'Eles aparecem no rótulo conforme concentração. '
-                        'Certifique-se que a ordem corresponde ao rótulo.',
+                        'A ordem dos ingredientes é importante para uma '
+                        'análise precisa. '
+                        'Eles aparecem no rótulo conforme concentração.',
                       ),
                       actions: [
                         TextButton(

@@ -47,9 +47,10 @@ class IngredientsViewModel extends ChangeNotifier {
   ];
 
   /// Chaves normalizadas (lower + sem espaço/hífen/_) para comparação
-  late final Set<String> _excipientKeysNormalized = _excipientFunctionKeys
-      .map((f) => f.toLowerCase().replaceAll(RegExp(r'[\s\-_]'), ''))
-      .toSet();
+  late final Set<String> _excipientKeysNormalized =
+      _excipientFunctionKeys
+          .map((f) => f.toLowerCase().replaceAll(RegExp(r'[\s\-_]'), ''))
+          .toSet();
 
   String _normalize(String s) =>
       s.toLowerCase().trim().replaceAll(RegExp(r'[\s\-_]'), '');
@@ -62,12 +63,16 @@ class IngredientsViewModel extends ChangeNotifier {
 
   // --------------------------------------------------------------------------
   // 2) Mapa de definições de funções cosméticas (do JSON)
-  late final Map<String, String> functionDefinitions;
+  // Agora um campo privado, inicializado vazio
+  final Map<String, String> _functionDefinitions = {};
+
+  /// Expondo _functionDefinitions de forma read-only
+  Map<String, String> get functionDefinitions => _functionDefinitions;
 
   /// Retorna a definição para uma função (case-insensitive).
   String getFunctionDefinition(String func) {
     final key = func.toLowerCase();
-    return functionDefinitions[key] ??
+    return _functionDefinitions[key] ??
         'Definição não encontrada para "$func".';
   }
 
@@ -88,7 +93,7 @@ class IngredientsViewModel extends ChangeNotifier {
     int maxFuncs = 3,
     int maxIngs = 3,
   }) {
-    // 1) Constrói a lista-base usando firstWhereOrNull para evitar retorno nulo incorreto
+    // 1) Constrói a lista-base usando firstWhereOrNull para evitar nulo
     final rawList = inciNames != null
         ? inciNames
             .map((name) => _all.firstWhereOrNull(
@@ -111,8 +116,7 @@ class IngredientsViewModel extends ChangeNotifier {
     // 3) Ordena e extrai top funções
     final sorted = scores.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
-    final topFunctions =
-        sorted.take(maxFuncs).map((e) => e.key).toList();
+    final topFunctions = sorted.take(maxFuncs).map((e) => e.key).toList();
 
     // 4) Pega até maxIngs ingredientes filtrados
     final topIngredients = rawList.take(maxIngs).toList();
@@ -149,15 +153,19 @@ class IngredientsViewModel extends ChangeNotifier {
       }
       displayed = _all.take(_pageSize).toList();
 
-      // Carrega definições de funções
-      final rawFuncs =
-          await rootBundle.loadString('assets/data/funcoes_cosmeticos.json');
-      final listaFuncoes = json.decode(rawFuncs) as List<dynamic>;
-      functionDefinitions = {
-        for (var item in listaFuncoes)
-          (item['funcao_ingles'] as String).toLowerCase():
-              (item['definicao'] as String)
-      };
+      // Carrega definições de funções só se ainda não tiverem sido carregadas
+      if (_functionDefinitions.isEmpty) {
+        final rawFuncs =
+            await rootBundle.loadString('assets/data/funcoes_cosmeticos.json');
+        final listaFuncoes = json.decode(rawFuncs) as List<dynamic>;
+
+        // popular o map privado
+        for (var item in listaFuncoes) {
+          final key = (item['funcao_ingles'] as String).toLowerCase();
+          final def = item['definicao'] as String;
+          _functionDefinitions[key] = def;
+        }
+      }
     } catch (e, st) {
       hasError = true;
       errorMessage = e.toString();
