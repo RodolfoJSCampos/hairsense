@@ -1,3 +1,4 @@
+// lib/main.dart
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -32,6 +33,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => ThemeController()),
         ChangeNotifierProvider(create: (_) => IngredientsViewModel()),
+        // Agora o ProductsViewModel é global
+        ChangeNotifierProvider(create: (_) => ProductsViewModel()),
       ],
       child: Consumer<ThemeController>(
         builder: (context, tema, _) {
@@ -55,11 +58,11 @@ class MyApp extends StatelessWidget {
                     child: const HomeView(),
                   ),
 
-             
               '/ingredients_view': (_) => const IngredientsView(),
-
-             
               '/selected_ingredients_view': (_) => const SelectedIngredientsView(),
+
+              // Removido o provider local aqui, agora só a View:
+              '/products_view': (_) => const ProductsView(),
             },
           );
         },

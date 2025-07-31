@@ -49,11 +49,10 @@ class _HomeViewState extends State<HomeView> {
       );
     }
 
-    // VM já injetado no main.dart pela rota /home_view
     final vm = context.watch<HomeViewModel>();
 
     return Scaffold(
-      appBar: const AppBarConfig(), 
+      appBar: const AppBarConfig(),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
@@ -66,8 +65,11 @@ class _HomeViewState extends State<HomeView> {
                 final card = vm.cards[index];
                 return GestureDetector(
                   onTap: () {
-                    if (card.titulo.toLowerCase() == 'ingredientes') {
+                    final title = card.titulo.toLowerCase();
+                    if (title == 'ingredientes') {
                       Navigator.pushNamed(context, '/ingredients_view');
+                    } else if (title == 'produtos') {
+                      Navigator.pushNamed(context, '/products_view');
                     }
                   },
                   child: _CardItem(card: card),

@@ -1,15 +1,28 @@
-
+// lib/viewmodels/ingredients_view_model.dart
 
 import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:collection/collection.dart';
 
 import '../models/models.dart';
 
+/// Contém as principais funções e ingredientes após análise
+class AnalysisResult {
+  final List<String> topFunctions;
+  final List<IngredientModel> topIngredients;
+
+  AnalysisResult({
+    required this.topFunctions,
+    required this.topIngredients,
+  });
+}
+
 class IngredientsViewModel extends ChangeNotifier {
   final List<IngredientModel> _all = [];
+  List<IngredientModel> get allIngredients => _all;
   List<IngredientModel> displayed = [];
 
   static const int _pageSize = 20;
@@ -63,35 +76,46 @@ class IngredientsViewModel extends ChangeNotifier {
   /// Exclui ingredientes que tenham qualquer função-excipiente
   List<IngredientModel> get _ingredientsForAnalysis {
     return selected.where((ing) {
-      // se ANY das funções for excipiente, exclui o ingrediente
-      final hasExcip = ing.functions.any(_isExcipientFunction);
-      return !hasExcip;
+      return !ing.functions.any(_isExcipientFunction);
     }).toList();
   }
 
   // --------------------------------------------------------------------------
   // 4) Cálculo de pesos e resultado da análise
-  AnalysisResult analyze({int maxFuncs = 3, int maxIngs = 3}) {
-    final list = _ingredientsForAnalysis;
-    final Map<String, int> scores = {};
+  /// Agora aceita opcionalmente nomes INCI de um produto
+  AnalysisResult analyze({
+    List<String>? inciNames,
+    int maxFuncs = 3,
+    int maxIngs = 3,
+  }) {
+    // 1) Constrói a lista-base usando firstWhereOrNull para evitar retorno nulo incorreto
+    final rawList = inciNames != null
+        ? inciNames
+            .map((name) => _all.firstWhereOrNull(
+                  (i) => i.inciName.toLowerCase() == name.toLowerCase(),
+                ))
+            .whereType<IngredientModel>()
+            .toList()
+        : _ingredientsForAnalysis;
 
-    // só considera até 5 primeiros ingredientes filtrados
-    for (var i = 0; i < min(list.length, 5); i++) {
-      final weight = 5 - i; // índice 0 → 5 pontos, índice 4 → 1 ponto
-      final ing = list[i];
-
-      for (final func in ing.functions) {
-        // pula se função contiver um excipiente
+    // 2) Pontua funções não-excipientes nos até 5 primeiros itens
+    final scores = <String, int>{};
+    for (var i = 0; i < min(rawList.length, 5); i++) {
+      final weight = 5 - i;
+      for (final func in rawList[i].functions) {
         if (_isExcipientFunction(func)) continue;
         scores[func] = (scores[func] ?? 0) + weight;
       }
     }
 
-    // ordena por pontuação e extrai somente as chaves
+    // 3) Ordena e extrai top funções
     final sorted = scores.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
-    final topFunctions = sorted.take(maxFuncs).map((e) => e.key).toList();
-    final topIngredients = list.take(maxIngs).toList();
+    final topFunctions =
+        sorted.take(maxFuncs).map((e) => e.key).toList();
+
+    // 4) Pega até maxIngs ingredientes filtrados
+    final topIngredients = rawList.take(maxIngs).toList();
 
     return AnalysisResult(
       topFunctions: topFunctions,
@@ -100,7 +124,7 @@ class IngredientsViewModel extends ChangeNotifier {
   }
 
   // ========================================================================
-  // 5) Inicialização, paging, pesquisa, seleção e reorder
+  // 5) Inicialização, paginação, pesquisa, seleção e reorder
   // ========================================================================
 
   Future<void> init() async {
@@ -109,7 +133,7 @@ class IngredientsViewModel extends ChangeNotifier {
       hasError = false;
       notifyListeners();
 
-      // Carrega ingredientes
+      // Carrega COSING ingredientes
       final rawIng =
           await rootBundle.loadString('assets/data/cosing_dados_pt-br.json');
       final data = json.decode(rawIng);
@@ -179,15 +203,4 @@ class IngredientsViewModel extends ChangeNotifier {
     selected.insert(newIndex, item);
     notifyListeners();
   }
-}
-
-/// Contém as principais funções e ingredientes após análise
-class AnalysisResult {
-  final List<String> topFunctions;
-  final List<IngredientModel> topIngredients;
-
-  AnalysisResult({
-    required this.topFunctions,
-    required this.topIngredients,
-  });
 }
