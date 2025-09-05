@@ -1,17 +1,15 @@
-// lib/views/selected_ingredients_view.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/models.dart';
-import '../viewmodels/ingredients_view_model.dart';
-import '../widgets/app_bar_config.dart';
+import '../models/models.dart'; 
+import '../viewmodels/ingredients_view_model.dart'; 
+import '../widgets/app_bar_config.dart'; 
 import '../widgets/ingredient_tile.dart';
 import 'analysis_result_view.dart';
 import 'ingredient_detail_view.dart';
 
 class SelectedIngredientsView extends StatefulWidget {
-  final Product? product;
+  final Product? product; 
 
   const SelectedIngredientsView({Key? key, this.product}) : super(key: key);
 
@@ -25,14 +23,16 @@ class _SelectedIngredientsViewState extends State<SelectedIngredientsView> {
   void initState() {
     super.initState();
 
-    // Se vier de um produto, pré-seleciona os ingredientes
+    // Se a tela foi chamada com um produto, pré-seleciona os ingredientes
     if (widget.product != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final vm = context.read<IngredientsViewModel>();
+
+        // Para cada ingrediente do produto, tenta encontrar e selecionar na lista geral
         for (final inci in widget.product!.ingredients) {
           for (final ing in vm.allIngredients) {
             if (ing.inciName.toLowerCase() == inci.toLowerCase()) {
-              vm.toggleSelected(ing);
+              vm.toggleSelected(ing); 
               break;
             }
           }
@@ -43,7 +43,6 @@ class _SelectedIngredientsViewState extends State<SelectedIngredientsView> {
 
   @override
   void dispose() {
-    // Ao sair da tela de produtos (fluxo product != null), limpa o selected
     if (widget.product != null) {
       context.read<IngredientsViewModel>().clearSelected();
     }
@@ -61,24 +60,29 @@ class _SelectedIngredientsViewState extends State<SelectedIngredientsView> {
         title: 'Selecionados',
         showBackButton: true,
       ),
+
       body: selected.isEmpty
           ? const Center(child: Text('Nenhum ingrediente selecionado'))
+
           : ReorderableListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 8),
               itemCount: selected.length,
               onReorder: vm.reorderSelected,
-              buildDefaultDragHandles: false,
+              buildDefaultDragHandles: false, 
               itemBuilder: (ctx, i) {
                 final ing = selected[i];
+
                 return IngredientTile(
                   key: ValueKey(ing.cosingRef),
                   ingredient: ing,
+
                   leading: fromProduct
                       ? null
                       : ReorderableDragStartListener(
                           index: i,
                           child: const Icon(Icons.drag_handle),
                         ),
+
                   trailing: fromProduct
                       ? null
                       : IconButton(
@@ -88,6 +92,7 @@ class _SelectedIngredientsViewState extends State<SelectedIngredientsView> {
                           ),
                           onPressed: () => vm.toggleSelected(ing),
                         ),
+
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (_) => IngredientDetailView(ingredient: ing),
@@ -96,6 +101,7 @@ class _SelectedIngredientsViewState extends State<SelectedIngredientsView> {
                 );
               },
             ),
+
       bottomNavigationBar: (!fromProduct && selected.isNotEmpty)
           ? Padding(
               padding: const EdgeInsets.all(16),
@@ -117,6 +123,7 @@ class _SelectedIngredientsViewState extends State<SelectedIngredientsView> {
                           onPressed: () => Navigator.of(ctx).pop(),
                           child: const Text('Voltar'),
                         ),
+
                         ElevatedButton(
                           onPressed: () {
                             Navigator.of(ctx).pop();

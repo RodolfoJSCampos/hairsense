@@ -15,19 +15,19 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  final PageController _pageController =
-      PageController(viewportFraction: 0.85);
+  final PageController _pageController = PageController(viewportFraction: 0.85);
+
   bool _validando = true;
 
   @override
   void initState() {
     super.initState();
-    _validarPerfil();
+    _validarPerfil(); 
   }
 
   Future<void> _validarPerfil() async {
-    final ok = await UsuarioValidadorService()
-        .validarUsuarioLogadoComPerfil();
+    final ok = await UsuarioValidadorService().validarUsuarioLogadoComPerfil();
+
     if (!ok && mounted) {
       Navigator.pushReplacementNamed(context, '/login_view');
     } else {
@@ -37,7 +37,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   void dispose() {
-    _pageController.dispose();
+    _pageController.dispose(); 
     super.dispose();
   }
 
@@ -52,17 +52,20 @@ class _HomeViewState extends State<HomeView> {
     final vm = context.watch<HomeViewModel>();
 
     return Scaffold(
-      appBar: const AppBarConfig(),
+      appBar: const AppBarConfig(), 
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+
       body: Column(
         children: [
           const SizedBox(height: 24),
+
           Expanded(
             child: PageView.builder(
               controller: _pageController,
               itemCount: vm.cards.length,
               itemBuilder: (context, index) {
                 final card = vm.cards[index];
+
                 return GestureDetector(
                   onTap: () {
                     final title = card.titulo.toLowerCase();
@@ -72,12 +75,14 @@ class _HomeViewState extends State<HomeView> {
                       Navigator.pushNamed(context, '/products_view');
                     }
                   },
-                  child: _CardItem(card: card),
+                  child: _CardItem(card: card), 
                 );
               },
             ),
           ),
+
           const SizedBox(height: 12),
+
           SmoothPageIndicator(
             controller: _pageController,
             count: vm.cards.length,
@@ -89,6 +94,7 @@ class _HomeViewState extends State<HomeView> {
               activeDotColor: Theme.of(context).colorScheme.primary,
             ),
           ),
+
           const SizedBox(height: 24),
         ],
       ),
@@ -96,27 +102,32 @@ class _HomeViewState extends State<HomeView> {
   }
 }
 
+// Widget que representa cada card do carrossel, colocar nos widgets?
 class _CardItem extends StatelessWidget {
-  final CardItemModel card;
+  final CardItemModel card; 
   const _CardItem({required this.card});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Card(
-        elevation: 6,
+        elevation: 6, // Sombra do card
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16), 
         ),
         child: Container(
           width: 320,
           height: 400,
           padding: const EdgeInsets.all(24),
+
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+
               Image.asset(card.imagem, width: 120, height: 120),
+
               const SizedBox(height: 24),
+
               Text(
                 card.titulo,
                 style: Theme.of(context)
@@ -124,7 +135,9 @@ class _CardItem extends StatelessWidget {
                     .headlineSmall
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
+
               const SizedBox(height: 12),
+
               Text(
                 card.descricao,
                 textAlign: TextAlign.center,

@@ -1,11 +1,9 @@
-// lib/views/products_view.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../viewmodels/viewmodels.dart';
-import '../widgets/product_card.dart';
-import '../widgets/app_bar_config.dart';
+import '../viewmodels/viewmodels.dart';          
+import '../widgets/product_card.dart';            
+import '../widgets/app_bar_config.dart';          
 
 class ProductsView extends StatefulWidget {
   const ProductsView({Key? key}) : super(key: key);
@@ -21,13 +19,14 @@ class _ProductsViewState extends State<ProductsView> {
   @override
   void initState() {
     super.initState();
+
     vm = context.read<ProductsViewModel>();
+
     _searchController = TextEditingController();
 
-    // carrega tudo após a primeira renderização
+
     WidgetsBinding.instance.addPostFrameCallback((_) => vm.init());
   }
-
   @override
   void dispose() {
     _searchController.dispose();
@@ -44,14 +43,14 @@ class _ProductsViewState extends State<ProductsView> {
         title: 'Produtos',
         showBackButton: true,
       ),
+
       body: Column(
         children: [
-          // campo de busca
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: TextField(
               controller: _searchController,
-              onChanged: vm.search,
+              onChanged: vm.search, 
               decoration: InputDecoration(
                 hintText: 'Buscar…',
                 prefixIcon: const Icon(Icons.search),
@@ -67,7 +66,7 @@ class _ProductsViewState extends State<ProductsView> {
             ),
           ),
 
-          // grid de produtos
+          // Área que exibe os produtos
           Expanded(
             child: Builder(builder: (_) {
               if (vm.isLoading) {
@@ -81,24 +80,23 @@ class _ProductsViewState extends State<ProductsView> {
               }
 
               if (vm.displayed.isEmpty) {
-                // Se o usuário está filtrando e não achou nada
                 if (term.isNotEmpty) {
                   return Center(
                     child: Text('Nenhum produto encontrado para “$term”'),
                   );
                 }
-                // Caso geral: JSON vazio ou base realmente sem itens
+
                 return const Center(child: Text('Nenhum produto disponível'));
               }
 
+              // Exibe os produtos em um grid
               return GridView.builder(
                 padding: const EdgeInsets.all(8),
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                  childAspectRatio: 0.7,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,         
+                  mainAxisSpacing: 8,        
+                  crossAxisSpacing: 8,       
+                  childAspectRatio: 0.7,    
                 ),
                 itemCount: vm.displayed.length,
                 itemBuilder: (_, index) {

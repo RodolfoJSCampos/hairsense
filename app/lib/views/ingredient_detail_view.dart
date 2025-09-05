@@ -1,11 +1,10 @@
-
 import 'package:flutter/material.dart';
 import '../models/models.dart';
 import '../services/services.dart';
 import '../widgets/widgets.dart';
 
 class IngredientDetailView extends StatelessWidget {
-  final IngredientModel ingredient;
+  final IngredientModel ingredient; 
 
   const IngredientDetailView({
     Key? key,
@@ -13,11 +12,9 @@ class IngredientDetailView extends StatelessWidget {
   }) : super(key: key);
 
   Future<void> _showDefinition(BuildContext context, String funcName) async {
-    // findAllByName agora retorna List<FunctionModel>
     final funcs = await FunctionsService.findAllByName(funcName);
 
     if (funcs.isEmpty) {
-      // nenhum resultado
       await showDialog(
         context: context,
         builder: (_) => AlertDialog(
@@ -34,7 +31,6 @@ class IngredientDetailView extends StatelessWidget {
       return;
     }
 
-    // monta conteúdo com uma ou várias definições
     final content = SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,6 +48,7 @@ class IngredientDetailView extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
+
                 Text(f.definition),
               ],
             ),
@@ -60,6 +57,9 @@ class IngredientDetailView extends StatelessWidget {
       ),
     );
 
+// if (!context.mounted) return;
+
+    // Mostra o conteúdo em um AlertDialog
     await showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -84,12 +84,13 @@ class IngredientDetailView extends StatelessWidget {
         title: 'Detalhes',
         showBackButton: true,
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1) Nome em destaque
+            // 1) Nome INCI do ingrediente em destaque
             Text(
               ingredient.inciName,
               style: Theme.of(context)
@@ -99,15 +100,16 @@ class IngredientDetailView extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // 2) Descrição completa
+            // 2) Descrição completa do ingrediente
             Text(
               ingredient.description,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 24),
 
-            // 3) Lista de funções (chips) com tap
+            // 3) Lista de funções do ingrediente (se houver)
             if (ingredient.functions.isNotEmpty) ...[
+              // Título da seção de funções
               Text(
                 'Funções',
                 style: Theme.of(context)
@@ -116,11 +118,14 @@ class IngredientDetailView extends StatelessWidget {
                     ?.copyWith(fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 8),
+
+              // Chips interativos para cada função
               Wrap(
                 spacing: 8,
                 runSpacing: 4,
                 children: ingredient.functions.map((func) {
                   return GestureDetector(
+                    // Ao tocar no chip, mostra definição da função
                     onTap: () => _showDefinition(context, func),
                     child: Chip(
                       label: Text(

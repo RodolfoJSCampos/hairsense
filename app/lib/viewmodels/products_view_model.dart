@@ -1,12 +1,10 @@
-// lib/viewmodels/products_view_model.dart
-
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:collection/collection.dart';
 
 import '../models/models.dart';
-import 'ingredients_view_model.dart';   // <— importa AnalysisResult
+import 'ingredients_view_model.dart'; 
 
 
 class ProductsViewModel extends ChangeNotifier {

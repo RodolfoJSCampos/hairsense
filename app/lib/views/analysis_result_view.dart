@@ -1,5 +1,3 @@
-// lib/views/analysis_result_view.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,8 +7,8 @@ import '../widgets/widgets.dart';
 import '../views/views.dart';
 
 class AnalysisResultView extends StatefulWidget {
-  final Product? product;
-  final String title;
+  final Product? product; 
+  final String title;     
 
   const AnalysisResultView({
     Key? key,
@@ -25,17 +23,13 @@ class AnalysisResultView extends StatefulWidget {
 class _AnalysisResultViewState extends State<AnalysisResultView> {
   @override
   void initState() {
-    super.initState();
-    // Não fazemos mais clearSelected() aqui
+    super.initState(); 
   }
 
   @override
   void dispose() {
-    // Limpa a lista de selected apenas ao sair do fluxo de produto
     if (widget.product != null) {
       context.read<IngredientsViewModel>().clearSelected();
-      // Se tiver análise no ProductsViewModel:
-      // context.read<ProductsViewModel>().clearAnalysis();
     }
     super.dispose();
   }
@@ -58,8 +52,10 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
         title: widget.product != null ? 'Detalhes do Produto' : widget.title,
         showBackButton: true,
       ),
+
       body: Stack(
         children: [
+          // Fundo decorativo com gradiente e borda
           Positioned(
             top: topOffset,
             left: 0,
@@ -114,12 +110,16 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
                     style: TextStyle(fontStyle: FontStyle.italic),
                   )
                 else
+                  // Mapeia cada função com barra de intensidade
                   ...result.topFunctions.asMap().entries.map((e) {
                     final i = e.key;
                     final func = e.value;
+
+                    // Calcula a largura proporcional à relevância
                     final widthFactor =
                         (result.topFunctions.length - i) /
                             result.topFunctions.length;
+
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: GestureDetector(
@@ -144,6 +144,8 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
                           children: [
                             Text(func),
                             const SizedBox(height: 4),
+
+                            // Barra de intensidade visual
                             LayoutBuilder(
                               builder: (_, cons) => Container(
                                 width: cons.maxWidth * widthFactor,
@@ -181,6 +183,7 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
 
                 const SizedBox(height: 8),
 
+                // Lista de ingredientes ativos
                 Expanded(
                   child: SingleChildScrollView(
                     child: Wrap(
@@ -224,7 +227,8 @@ class _AnalysisResultViewState extends State<AnalysisResultView> {
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (_) => SelectedIngredientsView(product: widget.product),
+                builder: (_) =>
+                    SelectedIngredientsView(product: widget.product),
               ),
             );
           },

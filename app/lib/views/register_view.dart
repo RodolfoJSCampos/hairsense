@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/viewmodels.dart';
+import '../viewmodels/viewmodels.dart'; 
 
 class RegisterView extends StatelessWidget {
   const RegisterView({super.key});
@@ -17,14 +17,19 @@ class RegisterView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 24),
+
               Center(child: Image.asset('assets/LogoMain.png', height: 140)),
+
               const SizedBox(height: 40),
+
               TextField(
                 controller: cadastroVM.emailController,
                 keyboardType: TextInputType.emailAddress,
                 decoration: _inputDeco('E-mail'),
               ),
+
               const SizedBox(height: 16),
+
               TextField(
                 controller: cadastroVM.senhaController,
                 obscureText: cadastroVM.senhaOculta,
@@ -40,17 +45,23 @@ class RegisterView extends StatelessWidget {
                   ),
                 ),
               ),
+
               const SizedBox(height: 16),
+
               TextField(
                 controller: cadastroVM.confirmarSenhaController,
                 obscureText: true,
                 decoration: _inputDeco('Repita a senha'),
               ),
+
               const SizedBox(height: 24),
+
+              // Botão de cadastro com e-mail
               cadastroVM.isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : ElevatedButton(
                       onPressed: () async {
+
                         final erro = await cadastroVM.registrarUsuario();
                         if (erro != null) {
                           _mostrarAlerta(context, 'Erro', erro);
@@ -61,7 +72,10 @@ class RegisterView extends StatelessWidget {
                               backgroundColor: Colors.green,
                             ),
                           );
+
                           await Future.delayed(const Duration(seconds: 2));
+
+                          // Verifica se ainda está montado antes de navegar
                           if (context.mounted) {
                             Navigator.pushReplacementNamed(context, '/login');
                           }
@@ -75,10 +89,13 @@ class RegisterView extends StatelessWidget {
                       ),
                       child: const Text('Criar Conta'),
                     ),
+
               const SizedBox(height: 16),
+
               OutlinedButton.icon(
                 onPressed: () async {
                   final erro = await cadastroVM.registerWithGoogle();
+
                   if (erro != null) {
                     _mostrarAlerta(context, 'Erro', erro);
                   } else {
@@ -88,7 +105,9 @@ class RegisterView extends StatelessWidget {
                         backgroundColor: Colors.green,
                       ),
                     );
+
                     await Future.delayed(const Duration(seconds: 2));
+
                     if (context.mounted) {
                       Navigator.pushReplacementNamed(context, '/login_view');
                     }
@@ -107,7 +126,9 @@ class RegisterView extends StatelessWidget {
                   side: const BorderSide(color: Colors.grey),
                 ),
               ),
+
               const SizedBox(height: 30),
+
               Center(
                 child: TextButton(
                   onPressed: () => Navigator.pop(context),

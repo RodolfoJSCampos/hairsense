@@ -1,5 +1,3 @@
-// lib/viewmodels/ingredients_view_model.dart
-
 import 'dart:convert';
 import 'dart:math';
 
@@ -9,7 +7,6 @@ import 'package:collection/collection.dart';
 
 import '../models/models.dart';
 
-/// Contém as principais funções e ingredientes após análise
 class AnalysisResult {
   final List<String> topFunctions;
   final List<IngredientModel> topIngredients;
@@ -34,7 +31,7 @@ class IngredientsViewModel extends ChangeNotifier {
   final List<IngredientModel> selected = [];
 
   // --------------------------------------------------------------------------
-  // 1) Defina aqui suas funções-excipientes
+  // 1) aqui as funções-excipientes
   static const List<String> _excipientFunctionKeys = [
     'solvent',
     'surfactant',
@@ -126,10 +123,6 @@ class IngredientsViewModel extends ChangeNotifier {
       topIngredients: topIngredients,
     );
   }
-
-  // ========================================================================
-  // 5) Inicialização, paginação, pesquisa, seleção e reorder
-  // ========================================================================
 
   Future<void> init() async {
     try {

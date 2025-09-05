@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../models/models.dart';
 import '../viewmodels/viewmodels.dart';
-// Ajuste o import abaixo para apontar à sua tela de detalhes/análise:
 import '../views/analysis_result_view.dart';
 
 class ProductCard extends StatelessWidget {

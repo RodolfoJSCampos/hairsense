@@ -1,5 +1,3 @@
-// lib/main.dart
-
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,7 +13,6 @@ Future<void> main() async {
 
   FirebaseFirestore.instance.settings = const Settings(
     persistenceEnabled: true,
-    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
   );
 
   await UsuarioValidadorService().validarUsuarioLogadoComPerfil();
@@ -33,7 +30,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LoginViewModel()),
         ChangeNotifierProvider(create: (_) => ThemeController()),
         ChangeNotifierProvider(create: (_) => IngredientsViewModel()),
-        // Agora o ProductsViewModel é global
         ChangeNotifierProvider(create: (_) => ProductsViewModel()),
       ],
       child: Consumer<ThemeController>(
@@ -60,8 +56,6 @@ class MyApp extends StatelessWidget {
 
               '/ingredients_view': (_) => const IngredientsView(),
               '/selected_ingredients_view': (_) => const SelectedIngredientsView(),
-
-              // Removido o provider local aqui, agora só a View:
               '/products_view': (_) => const ProductsView(),
             },
           );
